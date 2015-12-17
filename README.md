@@ -1,6 +1,5 @@
-resilience_indicator for the Philippines
+Resilience (socio-economic capacity) indicator for the Philippines' provinces
 ====================
-
 
 # Contents
 
@@ -16,13 +15,14 @@ All the data used now is only for proof-of-concept purpose, and will be replaced
 
 * compute_scorecard is the notebook used to compute the derivatives of the model. This information is needed to draw the scorecards
 
-* render_scorecards is used to actually draw the scorecards, and build the pdf containing all the scorecards.
+* render_scorecards is used to actually draw the scorecards, and build the pdf containing all the scorecards. The design of the scorecards will be updated to meet the PHL needs.
+
 * eps_to_png can be used to convert the scorecards to images
 
 * draw_maps_and_plots demonstrates how to draw maps with the results, as well as rudimentary plots. This will be updated to provide the illustrations that the PHL team need.
 
 ## Data
-The data currently used is in the form of Excel spreadsheet, csv data files, and a shapefile of administrative boundaries in the PHL.
+The data currently used is in the form of Excel spreadsheet, csv data files, and a shapefile of administrative boundaries in the PHL is gathered in the 'inputs/' subfolder.
 
 # Usage
 
@@ -33,7 +33,7 @@ This program requires python3 and several libraries. The recommendation is to re
 Optional requirements include imagemagick and ghostscript. Maps currently rely on R, but a pure python solution is under development. All optional requirements are available online for free.
 
 ## Launching 
-Just download and unzip this whole folder from github. The run.ba programs will launch the jupyer notebook for you.
+Just download and unzip this whole folder from github. The run.bat program will launch the jupyter notebook for you.
 
 
 
