@@ -8,7 +8,7 @@ library(maptools)
 library(ggplot2)
 
 # MAP
-admin_map_raw <- readShapeSpatial("PHL_adm1.shp")
+admin_map_raw <- readShapeSpatial("inputs/PHL_adm1.shp")
 
 # admin_map_raw = gSimplify(admin_map_raw,0.03, topologyPreserve=TRUE)
 
