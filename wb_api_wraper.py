@@ -1,4 +1,4 @@
-from pandas.io import wb
+from pandas_datareader import wb
 import numpy as np
 from datetime import date
 
