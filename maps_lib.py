@@ -25,11 +25,7 @@ def num_to_hex(x):
         h="0"+h
     return h
 
-def data_to_rgb(serie,**kwargs):
-    color_maper = kwargs.get('color_maper',plt.cm.get_cmap("Blues_r"))    
-    normalizer = kwargs.get('normalizer',n_to_one_normalizer)    
-    norm_param = kwargs.get('norm_param',0)
-    na_color = kwargs.get('na_color',"#333333")
+def data_to_rgb(serie,color_maper=plt.cm.get_cmap("Blues_r"), normalizer = n_to_one_normalizer, norm_param = 0, na_color = "#e0e0e0"):
     
     data_n = normalizer(serie,norm_param)
 
@@ -40,48 +36,147 @@ def data_to_rgb(serie,**kwargs):
     out[serie.isnull()]=na_color
     return out.str.upper()
     
+############################################################################# 
+#######################         FROM SVG              ####################### 
+#############################################################################     
     
-def append_styles_to_map(outmap,styles,inmap='BlankWorldMap.svg'):
-    inFile = open(inmap)
-    outFile = open(outmap+".svg", "w")
-    buffer = ['']
-    isreplacing=False
-    for line in inFile:
-        if line.startswith('/* Begin country color*/'):
-            isreplacing=True
-            buffer.append(line)
-            buffer.append(styles)
-        elif line.startswith('/* End country color*/'):
-            isreplacing=False
-        if not isreplacing:
-            buffer.append(line)
-    outFile.write("".join(buffer))
-    inFile.close()
-    outFile.close()
+from bs4 import BeautifulSoup    
+from IPython.display import Image, display, HTML, SVG
+img_width = 400
+import os
+
+def make_map_from_svg(series_in, svg_file_path, outname, color_maper=plt.cm.get_cmap("Blues"), label = "", new_title=None):
+    """Makes a cloropleth map and a legend from a panda series and a blank svg map. 
+    Assumes the index of the series matches the SVG classes
+    Saves the map in SVG, and in PNG if Inksscape is inkscape.
+    if provided, new_title sets the title for the new SVG map
+    """
     
-    call("inkscape -f {map}.svg -e {map}.png -d 150".format(map=outmap))
+    #simplifies the index to lower case without space
+    series_in.index = series_in.index.str.lower().str.replace(" ","_")
+    
+    #compute the colors 
+    color = data_to_rgb(series_in,color_maper=color_maper)
+
+    #Builds the CCS style for the new map  (todo: this step could get its own function)
+    style_base =\
+    """.{depname}
+    {{  
+       fill: {color};
+       stroke:#000000;
+       stroke-width:2;
+       fill-rule:evenodd;
+    }}"""
+
+    #Default style (for regions which are not in series_in)
+    style =\
+    """.default
+    {
+    fill: #e0e0e0;
+    stroke:#ffffff;
+    stroke-width:2;
+    fill-rule:evenodd;
+    }
+    """
 
     
-def make_legend(serie,label,path):
+    #builds the style line by line (using lower case identifiers)
+    for c in series_in.index:
+        style= style       + style_base.format(depname=c,color=color[c])+ "\n"   
+
+
+    #makes the legend
+    l = make_legend(100*series_in,color_maper,label,"legend_of_"+outname)
+    
+    #makes the map
+    # m= append_styles_to_map(svg_file_path,style,"map_of_"+outname,new_title)    
+
+    target_name = "map_of_"+outname
+
+    # def append_styles_to_map(svg_file_path,style,target_name,new_title=None):
+    
+    #read input MIND UTF8
+    with open(svg_file_path, 'r',encoding='utf8') as svgfile:
+        soup=BeautifulSoup(svgfile.read(),"xml")
+
+    #names of regions to lower case without space   
+    for p in soup.findAll("path"):
+        p["class"]=p["class"].lower().replace(" ","_")
+        #Update the title (tooltip) of each region with the numerical value (ignores missing values)
+        try:
+            p.title.string += "{val:.1%}".format(val=series_in[p["class"]])
+        except:
+            pass
+
+    #remove the existing style attribute (unimportant)
+    del soup.svg["style"]
+    
+    #append style
+    soup.style.string = style
+    
+    #Maybe update the title
+    if new_title is not None:
+        soup.title.string = new_title
+    else:
+        new_title = ""
+        
+    #write output
+    with open(target_name+".svg", 'w', encoding="utf-8") as svgfile:
+        svgfile.write(soup.prettify())
+        
+    #inkscapes SVG to PNG    
+    call("inkscape -f {map}.svg -e {map}.png -d 150".format(map=target_name), shell=True) 
+    
+    #Works around a bug in the notebook where style-based colouring colors all the maps  in the NB with a single color scale
+    # m= SVG("{map}.svg".format(map=target_name))
+    m= Image("{map}.png".format(map=target_name) ,width=img_width)  
+    display(HTML("<a target='_blank' href='"+target_name+".svg"+"'>SVG "+new_title+"</a>"))
+
+    #Attempts to downsize to a fix width and concatenate using imagemagick
+    call("convert legend_of_{outname}.png -resize {w} small_legend.png".format(outname=outname,w=img_width), shell=True )
+    call("convert map_of_{outname}.png -resize {w} small_map.png".format(outname=outname,w=img_width) , shell=True)
+    call("convert -append small_map.png small_legend.png map_and_legend_of_{outname}.png".format(outname=outname) , shell=True)
+    
+    #removes temp files
+    if os.path.isfile("small_map.png"):
+        os.remove("small_map.png")
+    if os.path.isfile("small_legend.png.png"):
+        os.remove("small_legend.png.png")
+        
+    if os.path.isfile("map_and_legend_of_{outname}.png".format(outname=outname)):
+        return Image("map_and_legend_of_{outname}.png".format(outname=outname))
+        
+    
+import matplotlib as mpl
+
+def make_legend(serie,cmap,label="",path=None):
+    
+    #todo: log flag
+        
     fig = plt.figure(figsize=(8,3))
     ax1 = fig.add_axes([0.05, 0.80, 0.9, 0.15])
 
-    cmap = mpl.cm.get_cmap("Greens")
-    vmin=(100*serie.min())
-    vmax=(100*serie.max())
+    vmin=serie.min()
+    vmax=serie.max()
 
-    # define the bins and normalize
-    bounds =np.linspace(vmin,vmax,7)
-    norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
+    # define discrete bins and normalize
+    # bounds =np.linspace(vmin,vmax,5)
+    # norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
+    #continuous legend
+    norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
 
-    cb = mpl.colorbar.ColorbarBase(ax1, cmap=cmap, norm=norm, orientation='horizontal', format="%2.1f")
+    cb = mpl.colorbar.ColorbarBase(ax1, cmap=cmap, norm=norm, orientation='horizontal')
     #cb.ax.set_xticklabels(['0.01%','0.1%','1%','10%'])
-    cb.set_label(label,size=20)
-
-    plt.savefig(path,bbox_inches="tight",transparent=True)    
+    cb.set_label(label)
+    if path is not None:
+        plt.savefig(path+".png",bbox_inches="tight",transparent=True)  
+    plt.close(fig)    
+    return Image(path+".png", width=img_width   )  
     
- 
+############################################################################# 
+#######################            FROM R             ####################### 
+#############################################################################
 import glob, sys, shutil
 from subprocess import call, Popen, PIPE
 
@@ -111,10 +206,24 @@ def map_with_r(df_maps,map_name,**kwargs):
         print("Map done")
 
         
-    print("There was no data for the following districts: "+", ".join(pd.read_csv("missing_admin_zones.txt",sep=" ",squeeze=True)))    
+    print("There was no data for the following districts: "+", ".join(pd.read_csv("missing_admin_zones.txt",sep=" ",encoding="latin-1",squeeze=True)))    
     
     shutil.copy("output_map.png",map_name)
     
     return 
+
+############################################################################# 
+#######################         FROM GEOPANDAS        ####################### 
+############################################################################# 
+import geopandas as gpd
+def map_from_gpd(df,title="Risk to assets",col_to_plot="risk_to_assets",figname="risk_to_assets.png",cm="BuPu"):
+
+    plt.figure(figsize=(9,9))
+
+    df.plot(column=col_to_plot,colormap=cm)
+
+    plt.axis("off")
+
+    plt.title(title)
     
- 
+    plt.savefig(figname)
