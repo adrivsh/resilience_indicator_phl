@@ -4,7 +4,7 @@ from scipy.special import erf
 from scipy.interpolate import interp1d
 from sorted_nicely import *
 
-def compute_resiliences(df_in,kind="exante"):
+def compute_resiliences(df_in):
     """Main function. Computes all outputs (dK, resilience, dC, etc,.) from inputs"""
     
     df=df_in.copy(deep=True)
@@ -13,8 +13,6 @@ def compute_resiliences(df_in,kind="exante"):
     # MACRO
     # # # # # # # # # # # # # # # # # # #
     
-    # Effect of production and reconstruction
-    ripple_effects= df["alpha"] 
     
     #rebuilding exponentially to 95% of initial stock in reconst_duration
     three = np.log(1/0.05) 
@@ -27,7 +25,7 @@ def compute_resiliences(df_in,kind="exante"):
     mu= df["avg_prod_k"]
 
     # Calculation of macroeconomic resilience
-    df["macro_multiplier"]=gamma =(ripple_effects*mu +recons_rate)/(rho+recons_rate)   
+    df["macro_multiplier"]=gamma =(mu +recons_rate)/(rho+recons_rate)   
    
 
     # # # # # # # # # # # # # # # # # # #
@@ -46,26 +44,18 @@ def compute_resiliences(df_in,kind="exante"):
     df["gdp_pc_pp"] = df["rel_gdp_pp"] * df["gdp_pc_pp_nat"]
     
     df["cp"]=cp=   df["share1"] *df["gdp_pc_pp"]
-    df["cr"]=cr=(1-df["share1"])*df["gdp_pc_pp"]
+    df["cr"]=cr=  (1 - df["pov_head"]*df["share1"])/(1-df["pov_head"])  *df["gdp_pc_pp"]
     #Eta
     elast=  df["income_elast"]
 
     ###########"
     #vulnerabilities from total and bias
-    if kind=="exante":
-        #early-warning-adjusted vulnerability
-        v_shew=   df["v"]   *(1-df["pi"]*df["shew"])
-        vs_touse = df["v_s"] *(1-df["pi"]*df["shew"]) * (1-df["nat_buyout"])
+    #early-warning-adjusted vulnerability
+    df["v_shew"]=   df["v"]   *(1-df["pi"]*df["shew"])
+    vs_touse = df["v_s"] *(1-df["pi"]*df["shew"]) * (1-df["nat_buyout"])
         
-    else:
-        v_shew = df["v"]
-        vs_touse = df["v_s"]*(1-df["nat_buyout"])
-        
-    df["v_shew"] = v_shew
-    
-    
     #Part of the losses shared at national level
-    df["v_shew_shared"]   = v_shew * (1-df["nat_buyout"])
+    df["v_shew_shared"]   = df["v_shew"] * (1-df["nat_buyout"])
     
     
     pv=df.pv
@@ -77,62 +67,13 @@ def compute_resiliences(df_in,kind="exante"):
     vr= df["v_r"]
   
 
-    # if False:
-        # & kind=="exante":
-        # Ability and willingness to improve transfers after the disaster
-        # df["borrow_abi"]=(df["rating"]+df["finance_pre"])/2 
-
-        # df["sigma_p"]=df["sigma_r"]=df["scale_up_target"]*(df["borrow_abi"]+df["prepare_scaleup"])/2
-
-        
-    # df["sigma_p"]=df["sigma_r"]=df["sigma_both"]
-        
     df["tot_p"]=tot_p=1-(1-df["social_p"])*(1-df["sigma_p"])
     df["tot_r"]=tot_r=1-(1-df["social_r"])*(1-df["sigma_r"])
     
     
-    share_shareable = 1 if kind=="exante" else df["share_nat_income"]
-        
     #No protection for ex post analysis
-    protection = pd.Series(index=df.index).fillna(0) if kind=="expost" else df["protection"]
+    protection =  df["protection"]
 
-    #link between exposure at one return period and other exposures
-    if kind=="exante":
-        fa_ratios=df[df.columns[df.columns.str.startswith("fa_ratio_")]]
-        fa_ratios.columns=map(lambda x:eval(x.split("fa_ratio_")[-1]),fa_ratios.columns)
-    else:
-        fa_ratios=pd.DataFrame(columns=[1],index=df.index).fillna(1)
-    fa_ratios=fa_ratios.sort_index(axis=1)
-    
-    #########################
-    ## Managing new fa_rations (when the derivative introduces protection+epsilon
-    old_rps = fa_ratios.columns.tolist()
-    all_rps = sorted(list(set(fa_ratios.columns.tolist()+df.dropna().protection .unique().tolist()))) if kind=="exante" else old_rps
-    new_rps = [p for p in all_rps if p not in old_rps]
-
-    #add new, interpolated fa_ratios
-    x = fa_ratios.columns.values
-    y = fa_ratios.values
-    
-    #assumes exposure to be linear between data points
-    # if kind=="exante" :
-        # fa_ratios=pd.concat([fa_ratios,pd.DataFrame(interp1d(x,y,fill_value=fa_ratios[x[-1]],bounds_error=False)(new_rps),index=fa_ratios.index, columns=new_rps)],axis=1).sort_index(axis=1) 
-        
-    #probability of each event
-    # q = [0]+[1-1/x for x in all_rps]+[1]
-    # proba=pd.Series(np.diff(q),index=[0]+all_rps)
-   
-    ############################
-    #### Parameters for poverty traps
-    
-    #cost of poverty trap
-    three = np.log(1/0.05) 
-    recover_rate= three/df["T_rebuild_L"] 
-    df["dC_destitution"] =df["gdp_pc_pp_nat"]/(rho+recover_rate)
-
-    #social exposure to poverty traps
-    df["institutional_exposure"] = ((1-df["axhealth"])+(1-df["plgp"])+df["unemp"])/3   
-    
     #reference exposure
     fa=df.fa 
     
@@ -144,15 +85,16 @@ def compute_resiliences(df_in,kind="exante"):
     ######################################
     #Welfare losses from consumption losses
     
-    deltaW,dKapparent,dcap,dcar    =calc_delta_welfare(ph,fap,far,vp,vr,vs_touse,cp,cr,tot_p         ,tot_r,mu,share_shareable,gamma,rho,elast)
-    #Assuming no scale up
-    dW_noupscale    ,foo,dcapns,dcarnos  =calc_delta_welfare(ph,fap,far,vp,vr,vs_touse,cp,cr,df["social_p"],df["social_r"],mu,share_shareable,gamma,rho,elast)
+    deltaW,dKapparent,dcap,dcar    =calc_delta_welfare(ph,fap,far,vp,vr,vs_touse,cp,cr,tot_p         ,tot_r,mu,gamma,rho,elast)
+   
+   #Assuming no scale up
+    dW_noupscale    ,foo,dcapns,dcarnos  =calc_delta_welfare(ph,fap,far,vp,vr,vs_touse,cp,cr,df["social_p"],df["social_r"],mu,gamma,rho,elast)
 
     # Assuming no transfers at all
-    dW_no_transfers   ,foo,foo,foo  =calc_delta_welfare(ph,fap,far,vp,vr,vs_touse,cp,cr,0             ,0             ,mu,share_shareable,gamma,rho,elast)
+    dW_no_transfers   ,foo,foo,foo  =calc_delta_welfare(ph,fap,far,vp,vr,vs_touse,cp,cr,0             ,0             ,mu,gamma,rho,elast)
 
     
-    #corrects from avoided losses thru national risk sharing
+    #corrects from avoided losses through national risk sharing
     dK = dKapparent/(1-df["nat_buyout"])
     
     
@@ -166,26 +108,21 @@ def compute_resiliences(df_in,kind="exante"):
     df["dKtot"]=dK*df["pop"]
     
     #######################################
-    #Welfare losses from poverty traps
+    #Welfare losses from health costs
+    
+
+    
+    # health_cost_raw_p = f_health_cost * cp
+    # health_cost_raw_r = f_health_cost * cr
+    
+    health_cost_paid_p =df.axhealth*cp
+    health_cost_paid_r =df.axhealth*cr
+    
 
     #individual exposure
     psi_p=df["axfin_p"]
     psi_r=df["axfin_r"]
     
-    #fraction of people with very low income
-    trap_treshold = 0.1*df["gdp_pc_pp_nat"]
-    
-    df["individual_exposure"]= individual_exposure =(
-            ph*fap*(1-psi_p)*THETA(cp-trap_treshold,cp*(1-tot_p)*vp,df["H"])+
-        (1-ph)*far*(1-psi_r)*THETA(cr-trap_treshold,cr*(1-tot_r)*vr,df["H"])
-        )
-          
-    #total exposure
-    df["destitution_exposure"] =tot_exposure =  individual_exposure *  df["institutional_exposure"]
-
-  
-
-    df["dW_destitution"]= dW_destitution =tot_exposure*(welf(df["gdp_pc_pp"]/rho,elast) - welf(df["gdp_pc_pp"]/rho-df["dC_destitution"],elast))
      
     ############################
     #Reference losses
@@ -200,21 +137,20 @@ def compute_resiliences(df_in,kind="exante"):
     proba = 1/protection
     df["deltaW_nat"] = deltaW_nat = wprime *  dK * df["nat_buyout"] * df["pop"]/df["pop"].sum()
     
-    df["equivalent_cost"] =  proba * (dW_destitution+deltaW+deltaW_nat)/wprime 
+    df["equivalent_cost"] =  proba * (deltaW+deltaW_nat)/wprime 
     
     df["risk"]= df["equivalent_cost"]/(df["gdp_pc_pp_ref"]);
     
     df["total_equivalent_cost"]=df["equivalent_cost"]*df["pop"];
-    df["total_equivalent_cost_of_destitution"]=df["total_equivalent_cost"]*dW_destitution/(dW_destitution+deltaW)
-    df["total_equivalent_cost_no_destitution"]=df["total_equivalent_cost"]*        deltaW/(dW_destitution+deltaW)
-    df["total_equivalent_cost_of_nat_buyout"]=df["total_equivalent_cost"]*        deltaW_nat/(dW_destitution+deltaW)
+    
+    df["total_equivalent_cost_of_nat_buyout"]=df["total_equivalent_cost"]*deltaW_nat/(deltaW)
 
 
     ############################
     #Risk and resilience
     
     #resilience
-    df["resilience"]                    =dWref/(dW_destitution+deltaW + deltaW_nat);
+    df["resilience"]                    =dWref/(deltaW + deltaW_nat);
     df["resilience_no_shock"]           =dWref/deltaW;
     df["resilience_no_shock_no_uspcale"]=dWref/dW_noupscale;
     df["resilience_no_shock_no_SP"]     =dWref/dW_no_transfers;
@@ -224,7 +160,7 @@ def compute_resiliences(df_in,kind="exante"):
     
     return df
     
-def calc_delta_welfare(ph,fap,far,vp,vr,v_shared,cp,cr,la_p,la_r,mu,sh_sh,gamma,rho,elast):
+def calc_delta_welfare(ph,fap,far,vp,vr,v_shared,cp,cr,la_p,la_r,mu,gamma,rho,elast):
     """welfare cost from consumption losses"""
 
     #fractions of people non-poor/poor affected/non affected over total pop
@@ -242,8 +178,8 @@ def calc_delta_welfare(ph,fap,far,vp,vr,v_shared,cp,cr,la_p,la_r,mu,sh_sh,gamma,
          kr*vr*far*(1-ph)
     
     # consumption losses per category of population
-    d_cur_cnp=fap*v_shared *la_p *kp *sh_sh   #v_shared does not change with v_rich so pv changes only vulnerabilities in the affected zone. 
-    d_cur_cnr=far*v_shared *la_r *kr *sh_sh
+    d_cur_cnp=fap*v_shared *la_p *kp    #v_shared does not change with v_rich so pv changes only vulnerabilities in the affected zone. 
+    d_cur_cnr=far*v_shared *la_r *kr 
     d_cur_cap=vp*(1-la_p)*kp + d_cur_cnp
     d_cur_car=vr*(1-la_r)*kr + d_cur_cnr
     
@@ -275,13 +211,6 @@ def welf(c,elast):
     
     return y
         
-    
-def THETA(y,m,H):
-    """P(x>y) where x follows log-normal of average=m and Homogeneity=H"""
-    #h=med/m = exp(-s**2/2)   log(h) = -s**2/2
-    #h=med/m   med = m*h = exp(mu)   mu = log(m*h)
-    return .5 * (1-erf(np.log(y/(m*H))/(2*np.sqrt(-np.log(H)))))
-   
 
 def unpack_v(v,pv,fa,pe,ph,share1):
 #poor and non poor vulnerability from aggregate vulnerability,  exposure and biases
@@ -300,6 +229,8 @@ def unpack_v(v,pv,fa,pe,ph,share1):
     
     return v_p,v_r
 
+    
+    
 def compute_v_fa(df):
     fap = df["fap"]
     far = df["far"]
