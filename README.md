@@ -7,11 +7,11 @@ This repository contains several things.
 
 ## Jupyter notebooks  (*.ipynb)
 
-For trainin purposes, focus on the following two notebooks. (You can view them from your broswer wth no additional requirement)
+For training purposes, focus on the following two notebooks. (You can view them from your broswer wth no additional requirement)
 * **[socio_economic_capacity_demo](socio_economic_capacity_demo.ipynb)** is the main demo of the model. (It will be updated regularly as the training dates approach). Just click here to see the demo. 
 All the data used now is only for proof-of-concept purpose, and will be replaced with data provided by the PHL team.
 
-* **[data_gathering_demo](data_gathering_demo.ipynb)** demonstrates how python can be used to gather data from diffent sources.
+* **[data_gathering_demo](data_gathering_demo.ipynb)** demonstrates how python can be used to gather data from different sources.
 
 You can ignore the rest of the python notebooks for now:
 
