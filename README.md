@@ -13,16 +13,6 @@ All the data used now is only for proof-of-concept purpose, and will be replaced
 
 * **[data_gathering_demo](data_gathering_demo.ipynb)** demonstrates how python can be used to gather data from different sources.
 
-You can ignore the rest of the python notebooks for now:
-
-* **compute_scorecard** is the notebook used to compute the derivatives of the model. This information is needed to draw the scorecards
-
-* **render_scorecards** is used to actually draw the scorecards, and build the pdf containing all the scorecards. The design of the scorecards will be updated to meet the PHL needs.
-
-* **eps_to_png** can be used to convert the scorecards to images
-
-* **draw_maps_and_plots** demonstrates how to draw maps with the results, as well as rudimentary plots. This will be updated to provide the illustrations that the PHL team need.
-
 ## Data
 The data currently used is in the form of Excel spreadsheet, csv data files, and a shapefile of administrative boundaries in the PHL is gathered in the 'inputs/' subfolder.
 
