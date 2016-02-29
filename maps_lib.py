@@ -88,15 +88,10 @@ def make_map_from_svg(series_in, svg_file_path, outname, color_maper=plt.cm.get_
     #makes the legend
     l = make_legend(100*series_in,color_maper,label,"legend_of_"+outname)
     
-    #makes the map
-    # m= append_styles_to_map(svg_file_path,style,"map_of_"+outname,new_title)    
-
     target_name = "map_of_"+outname
 
-    # def append_styles_to_map(svg_file_path,style,target_name,new_title=None):
-    
-    #read input MIND UTF8
-    with open(svg_file_path, 'r',encoding='utf8') as svgfile:
+    #read input 
+    with open(svg_file_path, 'r',encoding='utf8') as svgfile: #MIND UTF8
         soup=BeautifulSoup(svgfile.read(),"xml")
 
     #names of regions to lower case without space   
@@ -127,12 +122,12 @@ def make_map_from_svg(series_in, svg_file_path, outname, color_maper=plt.cm.get_
     #inkscapes SVG to PNG    
     call("inkscape -f {map}.svg -e {map}.png -d 150".format(map=target_name), shell=True) 
     
-    #Works around a bug in the notebook where style-based colouring colors all the maps  in the NB with a single color scale
-    # m= SVG("{map}.svg".format(map=target_name))
+   
+    #Display the map and a link to SVG
     m= Image("{map}.png".format(map=target_name) ,width=img_width)  
-    display(HTML("<a target='_blank' href='"+target_name+".svg"+"'>SVG "+new_title+"</a>"))
+    display(HTML("<a target='_blank' href='"+target_name+".svg"+"'>SVG "+new_title+"</a>"))  #Linking to SVG instead of showing SVG directly works around a bug in the notebook where style-based colouring colors all the maps in the NB with a single color scale (due to CSS)
 
-    #Attempts to downsize to a fix width and concatenate using imagemagick
+    #Attempts to downsize to a single width and concatenate using imagemagick
     call("convert legend_of_{outname}.png -resize {w} small_legend.png".format(outname=outname,w=img_width), shell=True )
     call("convert map_of_{outname}.png -resize {w} small_map.png".format(outname=outname,w=img_width) , shell=True)
     call("convert -append small_map.png small_legend.png map_and_legend_of_{outname}.png".format(outname=outname) , shell=True)
@@ -140,8 +135,8 @@ def make_map_from_svg(series_in, svg_file_path, outname, color_maper=plt.cm.get_
     #removes temp files
     if os.path.isfile("small_map.png"):
         os.remove("small_map.png")
-    if os.path.isfile("small_legend.png.png"):
-        os.remove("small_legend.png.png")
+    if os.path.isfile("small_legend.png"):
+        os.remove("small_legend.png")
         
     if os.path.isfile("map_and_legend_of_{outname}.png".format(outname=outname)):
         return Image("map_and_legend_of_{outname}.png".format(outname=outname))
@@ -150,9 +145,9 @@ def make_map_from_svg(series_in, svg_file_path, outname, color_maper=plt.cm.get_
 import matplotlib as mpl
 
 def make_legend(serie,cmap,label="",path=None):
-    
     #todo: log flag
-        
+
+    
     fig = plt.figure(figsize=(8,3))
     ax1 = fig.add_axes([0.05, 0.80, 0.9, 0.15])
 
@@ -172,6 +167,8 @@ def make_legend(serie,cmap,label="",path=None):
     if path is not None:
         plt.savefig(path+".png",bbox_inches="tight",transparent=True)  
     plt.close(fig)    
+    
+    
     return Image(path+".png", width=img_width   )  
     
 ############################################################################# 
