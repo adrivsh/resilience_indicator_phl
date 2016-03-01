@@ -240,8 +240,8 @@ def compute_v_fa(df):
 
     ph = df["pov_head"]
         
-    cp=   df["share1"] *df["gdp_pc_pp"]
-    cr=(1-df["share1"])*df["gdp_pc_pp"]
+    cp=   df["share1"] *df["gdp_pc_pp"]/ph
+    cr=(1-df["share1"])*df["gdp_pc_pp"]/(1-ph)
     
     fa = ph*fap+(1-ph)*far
     
