@@ -115,8 +115,8 @@ def compute_resiliences(df_in):
     # health_cost_raw_p = f_health_cost * cp
     # health_cost_raw_r = f_health_cost * cr
     
-    health_cost_paid_p =df.axhealth*cp
-    health_cost_paid_r =df.axhealth*cr
+    # health_cost_paid_p =df.axhealth*cp
+    # health_cost_paid_r =df.axhealth*cr
     
 
     #individual exposure
