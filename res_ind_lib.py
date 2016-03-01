@@ -115,8 +115,8 @@ def compute_resiliences(df_in):
     # health_cost_raw_p = f_health_cost * cp
     # health_cost_raw_r = f_health_cost * cr
     
-    health_cost_paid_p =df.axhealth*cp
-    health_cost_paid_r =df.axhealth*cr
+    # health_cost_paid_p =df.axhealth*cp
+    # health_cost_paid_r =df.axhealth*cr
     
 
     #individual exposure
@@ -240,8 +240,8 @@ def compute_v_fa(df):
 
     ph = df["pov_head"]
         
-    cp=   df["share1"] *df["gdp_pc_pp"]
-    cr=(1-df["share1"])*df["gdp_pc_pp"]
+    cp=   df["share1"] *df["gdp_pc_pp"]/ph
+    cr=(1-df["share1"])*df["gdp_pc_pp"]/(1-ph)
     
     fa = ph*fap+(1-ph)*far
     
