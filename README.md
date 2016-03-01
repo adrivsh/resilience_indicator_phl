@@ -3,11 +3,11 @@ Resilience (socio-economic capacity) indicator for the Philippines' provinces
 
 # Contents
 
-This repository contains several things. (It will be updated regularly as the training dates approach).
+This repository contains several things. It will be updated regularly as the training dates approach.
 
 ## Jupyter notebooks  (*.ipynb)
 
-For training purposes, focus on the following two notebooks. (You can view them from your broswer with no additional requirement)
+For training purposes, focus on the following two notebooks. You can *view* them from your broswer with no additional requirement.
 * **[socio_economic_capacity_demo](socio_economic_capacity_demo.ipynb)** is the main demo of the model. Just click the link to see the demo. 
 
 * **[data_gathering_demo](data_gathering_demo.ipynb)** demonstrates how Python and Pandas can be used to gather data from different sources.
@@ -22,6 +22,7 @@ Thi spreadsheet itself was compiled from diverse files Excel and csv data files 
 The *.py files contain function definitions. Among them, res_ind_lib.py contains the main set of equations of the model. The model, and thus this file, can be modified to be tailored to the PHL context.
 
 # Usage
+Here is how to *run* these notebooks in your computer.
 
 ## Dependencies
 
