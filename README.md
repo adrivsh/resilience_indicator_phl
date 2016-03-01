@@ -34,7 +34,7 @@ All requirements and optional dependencies are available for free on all platefo
 
 
 ## Launching 
-Just download and unzip this whole folder from github. 
+Just [download](https://github.com/adrivsh/resilience_indicator_phl/archive/master.zip) and unzip this whole folder from github. 
 The run.bat program will launch the jupyter notebook for you.
 
 
