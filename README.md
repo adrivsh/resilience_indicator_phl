@@ -7,16 +7,20 @@ This repository contains several things. It will be updated regularly as the tra
 
 ## Jupyter notebooks  (*.ipynb)
 
-For training purposes, focus on the following two notebooks. You can *view* them from your broswer with no additional requirement.
+For training purposes, focus on the first two following two notebooks. You can *view* them from your broswer with no additional requirement.
 * **[socio_economic_capacity_demo](socio_economic_capacity_demo.ipynb)** is the main demo of the model. Just click the link to see the demo. 
 
 * **[data_gathering_demo](data_gathering_demo.ipynb)** demonstrates how Python and Pandas can be used to gather data from different sources.
 All the data used now is only for proof-of-concept purpose, and can be replaced with data provided by the Philippine government.
 
+* **[draw_maps](draw_maps.ipynb)** is the code used to draw maps from a dataset and a blank SVG map.
+
 ## Data
 All the data required to run the resilience indicator is gathered in [all_data_compiled.xlsx](all_data_compiled.xlsx).
 
-Thi spreadsheet itself was compiled from diverse files Excel and csv data files in the [inputs/](inputs/) folder, using [data_gathering_demo](data_gathering_demo.ipynb).
+This spreadsheet itself was compiled from diverse files Excel and csv data files in the [inputs/](inputs/) folder, using [data_gathering_demo](data_gathering_demo.ipynb).
+
+The blank map of the Philippines' provinces is stored in [blank map of the Philippines](map/PHL_adm1.svg)
 
 ## Python libraries (*.py)
 The *.py files contain function definitions. Among them, res_ind_lib.py contains the main set of equations of the model. The model, and thus this file, can be modified to be tailored to the PHL context.
