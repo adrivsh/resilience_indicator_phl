@@ -10,7 +10,7 @@ far,"Exposure, non-poor people",0.8,0,1,small_percent,0.2
 faref,Reference Exposure,1,0,1,small_percent,0.2
 rel_gdp_pp, Average income of the province,1,0,1,percent,0.2
 gdp_pc_pp, Average income in the province,1,,,,0.2
-gdp_pc_pp_nat,National GDP per capita (PPP USD),1,,,,
+gdp_pc_pp_nat,National GDP per capita,1,,,,
 income_elast,Elasticity of utility,1,,,,
 ophe,Out-of-pocket health expenditure,1,0,1,percent,0.2
 pe,Exposure bias,1,0,1,percent,0.2
