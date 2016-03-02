@@ -20,7 +20,7 @@ All the data required to run the resilience indicator is gathered in [all_data_c
 
 This spreadsheet itself was compiled from diverse files Excel and csv data files in the [inputs/](inputs/) folder, using [data_gathering_demo](data_gathering_demo.ipynb).
 
-The blank map of the Philippines' provinces is stored in [blank map of the Philippines](map/PHL_adm1.svg)
+The blank map of the Philippines' provinces is stored in [map/PHL_adm1.svg](map/PHL_adm1.svg)
 
 ## Python libraries (*.py)
 The *.py files contain function definitions. Among them, res_ind_lib.py contains the main set of equations of the model. The model, and thus this file, can be modified to be tailored to the PHL context.
