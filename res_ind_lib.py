@@ -3,9 +3,29 @@ import pandas as pd
 from scipy.special import erf
 from scipy.interpolate import interp1d
 
-def compute_resiliences(df_in):
+def compute_resiliences(df_in, fa_ratios=None):
     """Main function. Computes all outputs (dK, resilience, dC, etc,.) from inputs"""
-    df=df_in.copy(deep=True)
+    
+    if fa_ratios is not None:
+
+        #grid of rps consistent with fa_ratios and protection
+        fa_ratios = interpolate_faratios(fa_ratios,df_in.protection.unique().tolist())
+
+        #builds a dataframe multi-indexed by return period  (province, (var, rp))
+        nrps =len(fa_ratios.columns)
+        df = pd.concat(
+            [df_in.copy(deep=True).select_dtypes(exclude=[object])]*nrps,
+            axis=1, keys=fa_ratios.columns, names=["rp","var"]
+            ).swaplevel("var","rp",axis=1).sortlevel(0,axis=1)
+        
+        #introduces different exposures for different return periods
+        df["fa"]=df["fa"]*fa_ratios
+        
+        #Reshapes into ((province,rp), vars) formally using only province as index
+        df=df.stack("rp").reset_index().set_index("province")
+        
+    else:
+        df=df_in.copy(deep=True)
 
     # # # # # # # # # # # # # # # # # # #
     # MACRO
@@ -69,10 +89,10 @@ def compute_resiliences(df_in):
     df["tot_r"]=tot_r=1-(1-df["social_r"])*(1-df["sigma_r"])
     
     
-    #No protection for ex post analysis
+    #Protection
     protection =  df["protection"]
 
-    #reference exposure
+    #Average exposure
     fa=df.fa 
     
     #exposures from total exposure and bias
@@ -83,9 +103,9 @@ def compute_resiliences(df_in):
     ######################################
     #Welfare losses from consumption losses
     
-    deltaW,dKapparent,dcap,dcar    =calc_delta_welfare(ph,fap,far,vp,vr,vs_touse,cp,cr,tot_p         ,tot_r,mu,gamma,rho,elast)
-   
-   #Assuming no scale up
+    delta_W,dKapparent,dcap,dcar    =calc_delta_welfare(ph,fap,far,vp,vr,vs_touse,cp,cr,tot_p         ,tot_r,mu,gamma,rho,elast)
+    
+    #Assuming no scale up
     dW_noupscale    ,foo,dcapns,dcarnos  =calc_delta_welfare(ph,fap,far,vp,vr,vs_touse,cp,cr,df["social_p"],df["social_r"],mu,gamma,rho,elast)
 
     # Assuming no transfers at all
@@ -93,65 +113,72 @@ def compute_resiliences(df_in):
 
     
     #corrects from avoided losses through national risk sharing
-    dK = dKapparent/(1-df["nat_buyout"])
-    
+    df["dK"] = dKapparent/(1-df["nat_buyout"])
     
     #output
-    df["delta_W"]=deltaW
+    df["delta_W"]=delta_W
     df["dW_noupscale"]=dW_noupscale
     df["dW_no_transfers"]=dW_no_transfers
-    df["dKpc"]=dK
     df["dcap"]=dcap
     df["dcar"]=dcar
-    df["dKtot"]=dK*df["pop"]
+    df["dKtot"]=df["dK"]*df["pop"]
     
-    #######################################
-    #Welfare losses from health costs
-    
+    ###AGGREGATION OF THE OUTPUTS OVER RETURN PERIODS
+    if fa_ratios is not None:
 
-    
-    # health_cost_raw_p = f_health_cost * cp
-    # health_cost_raw_r = f_health_cost * cr
-    
-    # health_cost_paid_p =df.axhealth*cp
-    # health_cost_paid_r =df.axhealth*cr
-    
+        #computes probability of each return period
+        fa_ratios.drop([0],axis=1, errors ="ignore", inplace=True)
+        
+        proba = pd.Series(np.diff(np.append(1/fa_ratios.columns.values,0)[::-1])[::-1],index=fa_ratios.columns) #removes 0 from the rps
+        
+        #matches return periods and their probability
+        proba_serie=df.rp.replace(proba)
+        
+        #removes events below the protection level
+        proba_serie[df.protectionref>df.rp] =0
+        
+        #average weighted by proba
+        f=df.mul(proba_serie,axis=0).sum(level="province").div(proba_serie.sum(level="province"),axis=0)
 
-    #individual exposure
-    psi_p=df["axfin_p"]
-    psi_r=df["axfin_r"]
-    
+        #
+        df = df_in.copy(deep=True)
+        df[f.columns]=f
+        
+        del f
+        
+       
      
     ############################
     #Reference losses
     h=1e-4
-    wprime =(welf(df["gdp_pc_pp_nat"]/rho+h,elast)-welf(df["gdp_pc_pp_nat"]/rho-h,elast))/(2*h)
-    dWref   = wprime*dK
+    # print(df.index)
+    # print(elast.index)
+    wprime =(welf(df["gdp_pc_pp_nat"]/rho+h,df["income_elast"])-welf(df["gdp_pc_pp_nat"]/rho-h,df["income_elast"]))/(2*h)
+    dWref   = wprime*df["dK"]
 
     #Risk
     
-    df["dWsurWprime"]=deltaW/wprime
+    df["dWsurWprime"]=df["delta_W"]/wprime
     
-    proba = 1/protection
-    df["deltaW_nat"] = deltaW_nat = wprime *  dK * df["nat_buyout"] * df["pop"]/df["pop"].sum()
+    df["deltaW_nat"] = wprime *  df["dK"] * df["nat_buyout"] * df["pop"]/df["pop"].sum()
     
-    df["equivalent_cost"] =  proba * (deltaW+deltaW_nat)/wprime 
+    df["equivalent_cost"] =  (df["delta_W"]+df["deltaW_nat"])/wprime /df["protection"]
     
     df["risk"]= df["equivalent_cost"]/(df["gdp_pc_pp_ref"]);
     
     df["total_equivalent_cost"]=df["equivalent_cost"]*df["pop"];
     
-    df["total_equivalent_cost_of_nat_buyout"]=df["total_equivalent_cost"]*deltaW_nat/(deltaW)
+    df["total_equivalent_cost_of_nat_buyout"]=df["total_equivalent_cost"]*df["deltaW_nat"]/(df["delta_W"])
 
 
     ############################
     #Risk and resilience
     
     #resilience
-    df["resilience"]                    =dWref/(deltaW + deltaW_nat);
-    df["resilience_no_shock"]           =dWref/deltaW;
-    df["resilience_no_shock_no_uspcale"]=dWref/dW_noupscale;
-    df["resilience_no_shock_no_SP"]     =dWref/dW_no_transfers;
+    df["resilience"]                    =dWref/(df["delta_W"] + df["deltaW_nat"]);
+    df["resilience_no_shock"]           =dWref/df["delta_W"];
+    df["resilience_no_shock_no_uspcale"]=dWref/df["dW_noupscale"];
+    df["resilience_no_shock_no_SP"]     =dWref/df["dW_no_transfers"];
 
     #risk to assets
     df["risk_to_assets"]  =df.resilience* df.risk;
@@ -256,11 +283,39 @@ def def_ref_values(df):
     df["peref"]=df["pe"]
     df["faref"]=df["fa"]
     df["share1_ref"]=df["share1"]
+    df["protectionref"]=df["protection"]
     df["gdp_pc_pp_ref"] = df["gdp_pc_pp"]
     vp,vr =unpack_v(df.v,df.pv,df.fa,df.pe,df.pov_head,df.share1)
     df["v_s"] = vr
     df["pov_head_ref"]=df["pov_head"]
     return df
+
+
+def interpolate_faratios(fa_ratios,protection_list):
+ 
+    #figures out all the return periods to be included
+    all_rps = list(set(protection_list+fa_ratios.columns.tolist()))
+
+    fa_ratios_rps = fa_ratios.copy()
+    
+    #extrapolates linear towards the 0 return period exposure  (this creates negative exposure that is tackled after interp) (mind the 0 rp when computing probas)
+    fa_ratios_rps[0]=fa_ratios_rps.iloc[:,0]- fa_ratios_rps.columns[0]*(
+        fa_ratios_rps.iloc[:,1]-fa_ratios_rps.iloc[:,0])/(
+        fa_ratios_rps.columns[1]-fa_ratios_rps.columns[0])
+    
+    
+    #add new, interpolated values for fa, assuming constant exposure on the right
+    x = fa_ratios_rps.columns.values
+    y = fa_ratios_rps.values
+    fa_ratios_rps= pd.concat(
+        [pd.DataFrame(interp1d(x,y,bounds_error=False)(all_rps),index=fa_ratios_rps.index, columns=all_rps)]
+        ,axis=1).sort_index(axis=1).clip(lower=0).fillna(method="pad",axis=1)
+    fa_ratios_rps.columns.name="rp"
+
+    return fa_ratios_rps
+        
+    
+    
     
 #function
 def make_tiers(series,labels=["Low","Mid","High"]):
