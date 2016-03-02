@@ -5,7 +5,6 @@ from scipy.interpolate import interp1d
 
 def compute_resiliences(df_in):
     """Main function. Computes all outputs (dK, resilience, dC, etc,.) from inputs"""
-    
     df=df_in.copy(deep=True)
 
     # # # # # # # # # # # # # # # # # # #
