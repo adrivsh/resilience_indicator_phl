@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 from scipy.special import erf
 from scipy.interpolate import interp1d
-from sorted_nicely import *
 
 def compute_resiliences(df_in):
     """Main function. Computes all outputs (dK, resilience, dC, etc,.) from inputs"""
