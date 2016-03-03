@@ -3,7 +3,7 @@ import pandas as pd
 from scipy.special import erf
 from scipy.interpolate import interp1d
 
-def compute_resiliences(df_in, fa_ratios=None):
+def compute_resiliences(df_in, fa_ratios=None, multihazard_data =None):
     """Main function. Computes all outputs (dK, resilience, dC, etc,.) from inputs"""
 
     if fa_ratios is None:
@@ -23,43 +23,6 @@ def compute_resiliences(df_in, fa_ratios=None):
     #IF MULTIPLE HZARDS
     
     return df
-    
-    
-def cast_return_periods(fa_ratios, df_in):    
-    #builds a dataframe multi-indexed by return period  (province, (var, rp))
-    nrps =len(fa_ratios.columns)
-    df = pd.concat(
-        [df_in.copy(deep=True).select_dtypes(exclude=[object])]*nrps,
-        axis=1, keys=fa_ratios.columns, names=["rp","var"]
-        ).swaplevel("var","rp",axis=1).sortlevel(0,axis=1)
-    
-    #introduces different exposures for different return periods
-    df["fa"]=df["fa"]*fa_ratios
-    
-    #Reshapes into ((province,rp), vars) formally using only province as index
-    df=df.stack("rp").reset_index().set_index("province")
-    
-    return df
-
-def average_over_rp(fa_ratios, df):        
-    ###AGGREGATION OF THE OUTPUTS OVER RETURN PERIODS
-    
-    #computes probability of each return period
-    fa_ratios.drop([0],axis=1, errors ="ignore", inplace=True)
-
-    proba = pd.Series(np.diff(np.append(1/fa_ratios.columns.values,0)[::-1])[::-1],index=fa_ratios.columns) #removes 0 from the rps
-
-    #matches return periods and their probability
-    proba_serie=df.rp.replace(proba)
-
-    #removes events below the protection level
-    proba_serie[df.protectionref>df.rp] =0
-
-    #average weighted by proba
-    return df.mul(proba_serie,axis=0).sum(level="province").div(proba_serie.sum(level="province"),axis=0)
-        
-    # df = df_in.copy(deep=True)
-    # df[f.columns]=f
 
 def compute_dK_dW(df):  
     df=df.copy(deep=True)
@@ -103,21 +66,15 @@ def compute_dK_dW(df):
     ###########"
     #vulnerabilities from total and bias
     #early-warning-adjusted vulnerability
-    df["v_shew"]=   df["v"]   *(1-df["pi"]*df["shew"])
+    df["v_shew"]=   df["v_s"]   *(1-df["pi"]*df["shew"])
     vs_touse = df["v_s"] *(1-df["pi"]*df["shew"]) * (1-df["nat_buyout"])
         
     #Part of the losses shared at national level
     df["v_shew_shared"]   = df["v_shew"] * (1-df["nat_buyout"])
     
     
-    pv=df.pv
-    
-    #poor and non poor vulnerability "protected" from exposure variations... 
-    df["v_p"],df["v_r"] = unpack_v(df["v_shew_shared"],pv,df.faref,df.peref,df.pov_head_ref,df.share1_ref)
-    
     vp = df["v_p"]
     vr= df["v_r"]
-  
 
     df["tot_p"]=tot_p=1-(1-df["social_p"])*(1-df["sigma_p"])
     df["tot_r"]=tot_r=1-(1-df["social_r"])*(1-df["sigma_r"])
@@ -126,13 +83,9 @@ def compute_dK_dW(df):
     #Protection
     protection =  df["protection"]
 
-    #Average exposure
-    fa=df.fa 
-    
-    #exposures from total exposure and bias
-    pe=df.pe
-    fap =df["fap"]=fa*(1+pe)
-    far =df["far"]=(fa-ph*fap)/(1-ph)
+    #exposures for poor and nonpoor
+    fap =df["fap"]
+    far =df["far"]
     
     ######################################
     #Welfare losses from consumption losses
@@ -159,9 +112,6 @@ def compute_dK_dW(df):
    
     return df
         
-        
-        
-   
 def calc_risk_and_resilience_from_k_w(df): 
     df=df.copy(deep=True)
     
@@ -223,7 +173,7 @@ def calc_delta_welfare(ph,fap,far,vp,vr,v_shared,cp,cr,la_p,la_r,mu,gamma,rho,el
          kr*vr*far*(1-ph)
     
     # consumption losses per category of population
-    d_cur_cnp=fap*v_shared *la_p *kp    #v_shared does not change with v_rich so pv changes only vulnerabilities in the affected zone. 
+    d_cur_cnp=fap*v_shared *la_p *kp    #v_shared does not change with v_rich so vr changes only vulnerabilities in the affected zone. 
     d_cur_cnr=far*v_shared *la_r *kr 
     d_cur_cap=vp*(1-la_p)*kp + d_cur_cnp
     d_cur_car=vr*(1-la_r)*kr + d_cur_cnr
@@ -256,58 +206,12 @@ def welf(c,elast):
     
     return y
         
-
-def unpack_v(v,pv,fa,pe,ph,share1):
-#poor and non poor vulnerability from aggregate vulnerability,  exposure and biases
-    
-    v_p = v*(1+pv)
-    
-    fap_ref= fa*(1+pe)
-    far_ref=(fa-ph*fap_ref)/(1-ph)
-    cp_ref=   share1
-    cr_ref=(1-share1)
-    
-    x=ph*cp_ref *fap_ref    
-    y=(1-ph)*cr_ref  *far_ref
-    
-    v_r = ((x+y)*v - x* v_p)/y
-    
-    return v_p,v_r
-
-    
-    
-def compute_v_fa(df):
-    fap = df["fap"]
-    far = df["far"]
-    
-    vp = df.v_p
-    vr=df.v_r
-
-    ph = df["pov_head"]
-        
-    cp=   df["share1"] *df["gdp_pc_pp"]/ph
-    cr=(1-df["share1"])*df["gdp_pc_pp"]/(1-ph)
-    
-    fa = ph*fap+(1-ph)*far
-    
-    x=ph*cp 
-    y=(1-ph)*cr 
-    
-    v=(y*vr+x*vp)/(x+y)
-    
-    return v,fa
-    
     
 def def_ref_values(df):
     #fills the "ref" variables (those protected when computing derivatives)
-    df["peref"]=df["pe"]
-    df["faref"]=df["fa"]
-    df["share1_ref"]=df["share1"]
     df["protectionref"]=df["protection"]
     df["gdp_pc_pp_ref"] = df["gdp_pc_pp"]
-    vp,vr =unpack_v(df.v,df.pv,df.fa,df.pe,df.pov_head,df.share1)
-    df["v_s"] = vr
-    df["pov_head_ref"]=df["pov_head"]
+    df["v_s"] = df["v_r"]
     return df
 
 
@@ -324,7 +228,7 @@ def interpolate_faratios(fa_ratios,protection_list):
         fa_ratios_rps.columns[1]-fa_ratios_rps.columns[0])
     
     
-    #add new, interpolated values for fa, assuming constant exposure on the right
+    #add new, interpolated values for fa_ratios, assuming constant exposure on the right
     x = fa_ratios_rps.columns.values
     y = fa_ratios_rps.values
     fa_ratios_rps= pd.concat(
@@ -334,7 +238,67 @@ def interpolate_faratios(fa_ratios,protection_list):
 
     return fa_ratios_rps
         
+   
+def cast_return_periods(fa_ratios, df_in):    
+#builds a dataframe multi-indexed by return period  (province, (var, rp))
+    nrps =len(fa_ratios.columns)
+    df = pd.concat(
+        [df_in.copy(deep=True).select_dtypes(exclude=[object])]*nrps,
+        axis=1, keys=fa_ratios.columns, names=["rp","var"]
+        ).swaplevel("var","rp",axis=1).sortlevel(0,axis=1)
     
+    #introduces different exposures for different return periods
+    df["fap"]=df["fap"]*fa_ratios
+    df["far"]=df["far"]*fa_ratios
+    
+    #Reshapes into ((province,rp), vars) formally using only province as index
+    df=df.stack("rp").reset_index().set_index("province")
+    
+    return df
+    
+def cast_hazard(hazard_info, df_in):    
+#builds a dataframe multi-indexed by return period  (province, (var, rp))
+    nrps =len(fa_ratios.columns)
+    df = pd.concat(
+        [df_in.copy(deep=True).select_dtypes(exclude=[object])]*nrps,
+        axis=1, keys=fa_ratios.columns, names=["rp","var"]
+        ).swaplevel("var","rp",axis=1).sortlevel(0,axis=1)
+    
+    #introduces different exposures for different return periods
+    # df["fa"]=df["fa"]*fa_ratios
+    
+    #Reshapes into ((province,rp), vars) formally using only province as index
+    df=df.stack("rp").reset_index().set_index("province")
+    
+    return df
+
+def average_over_rp(fa_ratios, df):        
+    ###AGGREGATION OF THE OUTPUTS OVER RETURN PERIODS
+    
+    #computes probability of each return period
+    fa_ratios.drop([0],axis=1, errors ="ignore", inplace=True)
+
+    proba = pd.Series(np.diff(np.append(1/fa_ratios.columns.values,0)[::-1])[::-1],index=fa_ratios.columns) #removes 0 from the rps
+
+    #matches return periods and their probability
+    proba_serie=df.rp.replace(proba)
+
+    #removes events below the protection level
+    proba_serie[df.protectionref>df.rp] =0
+
+    #average weighted by proba
+    averaged = df.mul(proba_serie,axis=0).sum(level="province").div(proba_serie.sum(level="province"),axis=0)
+    
+    return averaged.drop("rp",axis=1)
+    
+        
+    # df = df_in.copy(deep=True)
+    # df[f.columns]=f
+
+   
+   
+   
+   
 #function
 def make_tiers(series,labels=["Low","Mid","High"]):
     return pd.cut(series,[series.min()-1e3]+series.quantile([1/3,2/3]).tolist()+[series.max()+1e3],labels=labels).sort_values() #This magically orders the in the "Low", "Mid", "High" order, i wonder why
