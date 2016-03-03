@@ -5,39 +5,75 @@ from scipy.interpolate import interp1d
 
 def compute_resiliences(df_in, fa_ratios=None):
     """Main function. Computes all outputs (dK, resilience, dC, etc,.) from inputs"""
+
+    if fa_ratios is None:
+        df=df_in.copy(deep=True)
+    else:
+    #INTERPOLATION OVER RETURN PERIODS
+        fa_ratios = interpolate_faratios(fa_ratios, df_in.protection.unique().tolist())
+        df = cast_return_periods(fa_ratios, df_in.copy(deep=True))
+   
+    df = compute_dK_dW(df)
     
     if fa_ratios is not None:
+        df = average_over_rp(fa_ratios,df)
+    
+    df = calc_risk_and_resilience_from_k_w(df)
 
-        #grid of rps consistent with fa_ratios and protection
-        fa_ratios = interpolate_faratios(fa_ratios,df_in.protection.unique().tolist())
+    #IF MULTIPLE HZARDS
+    
+    return df
+    
+    
+def cast_return_periods(fa_ratios, df_in):    
+    #builds a dataframe multi-indexed by return period  (province, (var, rp))
+    nrps =len(fa_ratios.columns)
+    df = pd.concat(
+        [df_in.copy(deep=True).select_dtypes(exclude=[object])]*nrps,
+        axis=1, keys=fa_ratios.columns, names=["rp","var"]
+        ).swaplevel("var","rp",axis=1).sortlevel(0,axis=1)
+    
+    #introduces different exposures for different return periods
+    df["fa"]=df["fa"]*fa_ratios
+    
+    #Reshapes into ((province,rp), vars) formally using only province as index
+    df=df.stack("rp").reset_index().set_index("province")
+    
+    return df
 
-        #builds a dataframe multi-indexed by return period  (province, (var, rp))
-        nrps =len(fa_ratios.columns)
-        df = pd.concat(
-            [df_in.copy(deep=True).select_dtypes(exclude=[object])]*nrps,
-            axis=1, keys=fa_ratios.columns, names=["rp","var"]
-            ).swaplevel("var","rp",axis=1).sortlevel(0,axis=1)
-        
-        #introduces different exposures for different return periods
-        df["fa"]=df["fa"]*fa_ratios
-        
-        #Reshapes into ((province,rp), vars) formally using only province as index
-        df=df.stack("rp").reset_index().set_index("province")
-        
-    else:
-        df=df_in.copy(deep=True)
+def average_over_rp(fa_ratios, df):        
+    ###AGGREGATION OF THE OUTPUTS OVER RETURN PERIODS
+    
+    #computes probability of each return period
+    fa_ratios.drop([0],axis=1, errors ="ignore", inplace=True)
 
+    proba = pd.Series(np.diff(np.append(1/fa_ratios.columns.values,0)[::-1])[::-1],index=fa_ratios.columns) #removes 0 from the rps
+
+    #matches return periods and their probability
+    proba_serie=df.rp.replace(proba)
+
+    #removes events below the protection level
+    proba_serie[df.protectionref>df.rp] =0
+
+    #average weighted by proba
+    return df.mul(proba_serie,axis=0).sum(level="province").div(proba_serie.sum(level="province"),axis=0)
+        
+    # df = df_in.copy(deep=True)
+    # df[f.columns]=f
+
+def compute_dK_dW(df):  
+    df=df.copy(deep=True)
+    
     # # # # # # # # # # # # # # # # # # #
     # MACRO
     # # # # # # # # # # # # # # # # # # #
-    
     
     #rebuilding exponentially to 95% of initial stock in reconst_duration
     three = np.log(1/0.05) 
     recons_rate = three/ df["T_rebuild_K"]  
     
-    #exogenous discount rate
-    rho= 5/100
+    #discount rate
+    rho = df["rho"]
     
     #productivity of capital
     mu= df["avg_prod_k"]
@@ -45,11 +81,9 @@ def compute_resiliences(df_in, fa_ratios=None):
     # Calculation of macroeconomic resilience
     df["macro_multiplier"]=gamma =(mu +recons_rate)/(rho+recons_rate)   
    
-
     # # # # # # # # # # # # # # # # # # #
     # MICRO 
     # # # # # # # # # # # # # # # # # # #
-    
     
     ###############################
     #Description of inequalities
@@ -121,38 +155,23 @@ def compute_resiliences(df_in, fa_ratios=None):
     df["dW_no_transfers"]=dW_no_transfers
     df["dcap"]=dcap
     df["dcar"]=dcar
-    df["dKtot"]=df["dK"]*df["pop"]
+    df["dKtot"]=df["dK"]*df["pop"]    
+   
+    return df
+        
+        
+        
+   
+def calc_risk_and_resilience_from_k_w(df): 
+    df=df.copy(deep=True)
     
-    ###AGGREGATION OF THE OUTPUTS OVER RETURN PERIODS
-    if fa_ratios is not None:
-
-        #computes probability of each return period
-        fa_ratios.drop([0],axis=1, errors ="ignore", inplace=True)
-        
-        proba = pd.Series(np.diff(np.append(1/fa_ratios.columns.values,0)[::-1])[::-1],index=fa_ratios.columns) #removes 0 from the rps
-        
-        #matches return periods and their probability
-        proba_serie=df.rp.replace(proba)
-        
-        #removes events below the protection level
-        proba_serie[df.protectionref>df.rp] =0
-        
-        #average weighted by proba
-        f=df.mul(proba_serie,axis=0).sum(level="province").div(proba_serie.sum(level="province"),axis=0)
-
-        #
-        df = df_in.copy(deep=True)
-        df[f.columns]=f
-        
-        del f
-        
-       
-     
     ############################
     #Reference losses
     h=1e-4
-    # print(df.index)
-    # print(elast.index)
+    
+    #discount rate
+    rho = df["rho"]
+    
     wprime =(welf(df["gdp_pc_pp_nat"]/rho+h,df["income_elast"])-welf(df["gdp_pc_pp_nat"]/rho-h,df["income_elast"]))/(2*h)
     dWref   = wprime*df["dK"]
 
@@ -184,6 +203,7 @@ def compute_resiliences(df_in, fa_ratios=None):
     df["risk_to_assets"]  =df.resilience* df.risk;
     
     return df
+    
     
 def calc_delta_welfare(ph,fap,far,vp,vr,v_shared,cp,cr,la_p,la_r,mu,gamma,rho,elast):
     """welfare cost from consumption losses"""
@@ -314,8 +334,6 @@ def interpolate_faratios(fa_ratios,protection_list):
 
     return fa_ratios_rps
         
-    
-    
     
 #function
 def make_tiers(series,labels=["Low","Mid","High"]):
