@@ -9,32 +9,33 @@ fap,"Exposure, poor people",0.2,0,1,small_percent,0.2
 far,"Exposure, non-poor people",0.8,0,1,small_percent,0.2
 faref,Reference Exposure,1,0,1,small_percent,0.2
 rel_gdp_pp, Average income of the province,1,0,1,percent,0.2
-gdp_pc_pp, Average income in the province,1,,,,0.2
+rho,Discount rate,1,,,,0.2
+gdp_pc_pp, Average income in the province,1,,,,
 gdp_pc_pp_nat,National GDP per capita,1,,,,
-income_elast,Elasticity of utility,1,,,,
+income_elast,Elasticity of utility,1,0,1,percent,0.2
 ophe,Out-of-pocket health expenditure,1,0,1,percent,0.2
 pe,Exposure bias,1,0,1,percent,0.2
 peref, ,1,0,1,percent,0.2
 pi,Avoided losses with early warning,1,0,1,percent,0.2
-plgp,Basic education,1,0,1,percent,0.2
-pop,Population,,,,,
+plgp,Basic education,1,,,,
+pop,Population,,0,1,percent,0.2
 nat_buyout,Risk transferred nationally,1,0,1,percent,0.2
 pov_head,Poverty incidence,1,0,1,percent,0.2
-pov_head_ref,Poverty headcount,1,0,1,percent,0.2
-protection, Hazard (protection),1,0,10,simple,0.02
-pv,Asset-vulnerability bias,1,0,1,percent,0.2
-resilience,Socio-economic capacity,1,0,1,percent,0.3
-risk,Risk to well-being,,0,1,risk,0.3
-share1,Relative income of poor families,1,0,1,percent,0.2
-shew,Access to early warning,1,0,1,percent,0.02
+pov_head_ref,Poverty headcount,1,0,10,simple,0.02
+protection, Hazard (protection),1,0,1,percent,0.2
+pv,Asset-vulnerability bias,1,0,1,percent,0.3
+resilience,Socio-economic capacity,1,0,1,risk,0.3
+risk,Risk to well-being,,0,1,percent,0.2
+share1,Relative income of poor families,1,0,1,percent,0.02
+shew,Access to early warning,1,0,1,percent,0.2
 sigma_p,Effective scale up for poor people,0.2,0,1,percent,0.2
 sigma_r,Effective scale up for non-poor people,0.8,0,1,percent,0.2
 social_p,Social protection for poor people,0.2,0,1,percent,0.2
-social_r,Social protection for non-poor people,0.8,0,1,percent,0.2
-T_rebuild_K,Time to reconstruct,1,0,10,simple,0.2
+social_r,Social protection for non-poor people,0.8,0,10,simple,0.2
+T_rebuild_K,Time to reconstruct,1,0,1,percent,0.2
 v,Vulnerability without early warning,1,0,1,percent,0.2
 v_p,Asset vulnerability (poor people),0.2,0,1,percent,0.2
 v_r,Asset vulnerability (non-poor people),0.8,0,1,percent,0.2
 v_s,Asset vulnerability (shared sector),0.8,0,1,percent,0.2
 v_shew,Asset vulnerability,1,0,1,percent,0.2
-scale_up_target,Scale-up target,1,0,1,percent,0.2
+scale_up_target,Scale-up target,1,,,,
