@@ -6,30 +6,31 @@ from scipy.interpolate import interp1d
 def compute_resiliences(df_in, fa_ratios=None, multihazard_data =None):
     """Main function. Computes all outputs (dK, resilience, dC, etc,.) from inputs"""
 
-    df=df_in.copy()
-    
-    if  multihazard_data is not None:
-        df = broadcast_hazard(multihazard_data, df)
+    #blends multihazard data
+    dfm = broadcast_hazard(multihazard_data, df_in)
    
-    if fa_ratios is not None:
-    #INTERPOLATION OVER RETURN PERIODS
-        fa_ratios = interpolate_faratios(fa_ratios, df_in.protection.unique().tolist())
-        df = broadcast_return_periods(fa_ratios, df)
+    #interpolate fa rations and blends far ratios data
+    fa_ratios = interpolate_faratios(fa_ratios, df_in.protection.unique().tolist())
+    dfmr = broadcast_return_periods(fa_ratios, dfm)
    
-   
-    df=compute_dK_dW(df)
-    # print(df.head())
-    if fa_ratios is not None:
-    #AVERAGE OVER RETURN PERIODS
-        df = average_over_rp(df)
-    
-    df = calc_risk_and_resilience_from_k_w(df)
+    #computes dk_{hazard, return} and dW_{hazard, return}
+    dk_dwmr=compute_dK_dW(dfmr)
 
-    #IF MULTIPLE HZARDS
+    #dk_{hazard} and dW_{hazard}
+    dk_dwm = average_over_rp(dk_dwmr)
     
-    return df
+    #Sums over hazard dk, dW
+    df_dw = sum_over_hazard(dk_dwm)
+    
+    #resi = dk/dW, Risk to assets = EdK/prot, etc
+    df_out = calc_risk_and_resilience_from_k_w(df_dw)
+
+    return df_out
     
 def broadcast_hazard(hazard_info, df_in):    
+    if hazard_info is None:
+        return df_in
+    
     hazard_list = hazard_info.hazard.unique()
     
     nb_hazards =len(hazard_list)
@@ -42,11 +43,15 @@ def broadcast_hazard(hazard_info, df_in):
     mh = hazard_info.set_index(["province","hazard"])
     df[mh.columns]=mh
     
-    return df
+    return df.dropna()
     
     
 def broadcast_return_periods(fa_ratios, df_in):    
     #builds a dataframe "multi-indexed" by return period  ((province,rp), var)
+    
+    if fa_ratios is None:
+        return df_in
+    
     nrps =len(fa_ratios.columns)
     df = pd.concat(
         [df_in.copy(deep=True)]*nrps,
@@ -60,7 +65,7 @@ def broadcast_return_periods(fa_ratios, df_in):
     
     # df=df#.reset_index("rp")#.set_index(["province","rp"])
     
-    return df
+    return df.dropna()
     
 
 
@@ -122,9 +127,6 @@ def compute_dK_dW(df):
     df["tot_r"]=tot_r=1-(1-df["social_r"])*(1-df["sigma_r"])
     
     
-    #Protection
-    protection =  df["protection"]
-
     #exposures for poor and nonpoor
     fap =df["fap"]
     far =df["far"]
@@ -157,9 +159,7 @@ def compute_dK_dW(df):
 def calc_risk_and_resilience_from_k_w(df): 
     """Computes risk and resilience from dk, dw and protection. Line by line: multiple return periods or hazard is transparent to this function"""
     
-    
     df=df.copy()    
-    
     
     ############################
     #Reference losses
@@ -262,6 +262,8 @@ def def_ref_values(df):
 
 
 def interpolate_faratios(fa_ratios,protection_list):
+    if fa_ratios is None:
+        return None
  
     #figures out all the return periods to be included
     all_rps = list(set(protection_list+fa_ratios.columns.tolist()))
@@ -284,9 +286,15 @@ def interpolate_faratios(fa_ratios,protection_list):
 
     return fa_ratios_rps
         
-   
-
+ 
 def average_over_rp(df):        
+    #does nothing if df does not contain data on return periods
+    try:
+        if "rp" not in df.index.names:
+            return df
+    except(TypeError):
+        pass
+    
     ###AGGREGATION OF THE OUTPUTS OVER RETURN PERIODS
     df=df.copy().reset_index("rp")
     
@@ -310,6 +318,25 @@ def average_over_rp(df):
     averaged = df.mul(proba_serie,axis=0).sum(level=idxlevels).div(proba_serie.sum(level=idxlevels),axis=0)
     
     return averaged.drop("rp",axis=1)
+
+
+def sum_over_hazard(df):  
+    #does nothing if df does not contain data on multiple hazards 
+    try:
+        if "hazard" not in df.index.names:
+            return df
+    except(TypeError):
+        pass
+    
+    df=df.reset_index("hazard")
+    
+    #handles cases with multi index and single index (works around pandas limitation)
+    idxlevels = list(range(df.index.nlevels))
+    if idxlevels==[0]:
+        idxlevels =0
+    
+    return df.sum(level=idxlevels)
+        
     
    
 #function
