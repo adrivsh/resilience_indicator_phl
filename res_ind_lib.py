@@ -38,9 +38,9 @@ def broadcast_hazard(hazard_info, df_in):
         axis=1, keys=hazard_list, names=["hazard","var"]
         ).stack("hazard").sort_index().sortlevel()#.reset_index("hazard")
     
-    #copies multi hazard info in the casted dataframe
-    # mh = hazard_info.set_index(["Province","hazard"])
-    # df[mh.columns]=mh
+    # copies multi hazard info in the casted dataframe
+    mh = hazard_info.set_index(["province","hazard"])
+    df[mh.columns]=mh
     
     return df
     
@@ -301,7 +301,7 @@ def average_over_rp(df):
     #removes events below the protection level
     proba_serie[df.protectionref>df.rp] =0
 
-    #handles cases with multi index and single index
+    #handles cases with multi index and single index (works around pandas limitation)
     idxlevels = list(range(df.index.nlevels))
     if idxlevels==[0]:
         idxlevels =0
@@ -311,13 +311,6 @@ def average_over_rp(df):
     
     return averaged.drop("rp",axis=1)
     
-        
-    # df = df_in.copy(deep=True)
-    # df[f.columns]=f
-
-   
-   
-   
    
 #function
 def make_tiers(series,labels=["Low","Mid","High"]):
