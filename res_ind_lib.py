@@ -6,14 +6,14 @@ from scipy.interpolate import interp1d
 def compute_resiliences(df_in, fa_ratios=None, multihazard_data =None):
     """Main function. Computes all outputs (dK, resilience, dC, etc,.) from inputs"""
 
-    if fa_ratios is None:
-        df=df_in.copy(deep=True)
-    else:
+    df=df_in.copy()
+    
+    if fa_ratios is not None:
     #INTERPOLATION OVER RETURN PERIODS
         fa_ratios = interpolate_faratios(fa_ratios, df_in.protection.unique().tolist())
-        df = cast_return_periods(fa_ratios, df_in.copy(deep=True))
+        df = cast_return_periods(fa_ratios, df)
    
-    df = compute_dK_dW(df)
+    df=compute_dK_dW(df)
     
     if fa_ratios is not None:
         df = average_over_rp(fa_ratios,df)
@@ -23,9 +23,44 @@ def compute_resiliences(df_in, fa_ratios=None, multihazard_data =None):
     #IF MULTIPLE HZARDS
     
     return df
+    
+def cast_hazard(hazard_info, df_in):    
+    hazard_list = hazard_info.hazard.unique()
+    
+    nb_hazards =len(hazard_list)
+    df = pd.concat(
+        [df_in]*nb_hazards,
+        axis=1, keys=hazard_list, names=["hazard","var"]
+        ).stack("hazard").reset_index("hazard")
+    
+    #copies multi hazard info in the casted dataframe
+    # mh = hazard_info.set_index(["Province","hazard"])
+    # df[mh.columns]=mh
+    
+    return df
+    
+    
+def cast_return_periods(fa_ratios, df_in):    
+    #builds a dataframe "multi-indexed" by return period  ((province,rp), var)
+    nrps =len(fa_ratios.columns)
+    df = pd.concat(
+        [df_in.copy(deep=True)]*nrps,
+        axis=1, keys=fa_ratios.columns, names=["rp","var"]
+        ).swaplevel("var","rp",axis=1).sortlevel(0,axis=1)
+    
+    #introduces different exposures for different return periods
+    df["fap"]=df["fap"]*fa_ratios
+    df["far"]=df["far"]*fa_ratios
+    
+    #Reshapes into ((province,rp), vars) 
+    df=df.stack("rp").reset_index("rp")#.set_index(["province","rp"])
+    
+    return df
+    
+
 
 def compute_dK_dW(df):  
-    df=df.copy(deep=True)
+    df=df.copy()    
     
     # # # # # # # # # # # # # # # # # # #
     # MACRO
@@ -113,7 +148,8 @@ def compute_dK_dW(df):
     return df
         
 def calc_risk_and_resilience_from_k_w(df): 
-    df=df.copy(deep=True)
+    df=df.copy()    
+    
     
     ############################
     #Reference losses
@@ -239,40 +275,10 @@ def interpolate_faratios(fa_ratios,protection_list):
     return fa_ratios_rps
         
    
-def cast_return_periods(fa_ratios, df_in):    
-#builds a dataframe multi-indexed by return period  (province, (var, rp))
-    nrps =len(fa_ratios.columns)
-    df = pd.concat(
-        [df_in.copy(deep=True).select_dtypes(exclude=[object])]*nrps,
-        axis=1, keys=fa_ratios.columns, names=["rp","var"]
-        ).swaplevel("var","rp",axis=1).sortlevel(0,axis=1)
-    
-    #introduces different exposures for different return periods
-    df["fap"]=df["fap"]*fa_ratios
-    df["far"]=df["far"]*fa_ratios
-    
-    #Reshapes into ((province,rp), vars) formally using only province as index
-    df=df.stack("rp").reset_index().set_index("province")
-    
-    return df
-    
-def cast_hazard(hazard_info, df_in):    
-#builds a dataframe multi-indexed by return period  (province, (var, rp))
-    nrps =len(fa_ratios.columns)
-    df = pd.concat(
-        [df_in.copy(deep=True).select_dtypes(exclude=[object])]*nrps,
-        axis=1, keys=fa_ratios.columns, names=["rp","var"]
-        ).swaplevel("var","rp",axis=1).sortlevel(0,axis=1)
-    
-    #introduces different exposures for different return periods
-    # df["fa"]=df["fa"]*fa_ratios
-    
-    #Reshapes into ((province,rp), vars) formally using only province as index
-    df=df.stack("rp").reset_index().set_index("province")
-    
-    return df
 
 def average_over_rp(fa_ratios, df):        
+    df=df.copy()    
+        
     ###AGGREGATION OF THE OUTPUTS OVER RETURN PERIODS
     
     #computes probability of each return period
