@@ -164,6 +164,7 @@ def calc_risk_and_resilience_from_k_w(df):
     df["deltaW_nat"] = wprime * df["dK"]* df["nat_buyout"]* df["pop"]/df["pop"].sum()
     df["equivalent_cost"] =  (df["delta_W"]+df["deltaW_nat"])/wprime /df["protection"]
     df["risk"]= df["equivalent_cost"]/(df["gdp_pc_pp_ref"]);
+    df["total_equivalent_cost"]=df["equivalent_cost"]*df["pop"];
     
     ############
     #SOCIO-ECONOMIC CAPACITY)
