@@ -7,25 +7,25 @@ def compute_resiliences(df_in, fa_ratios=None, multihazard_data =None):
     """Main function. Computes all outputs (dK, resilience, dC, etc,.) from inputs"""
 
     #blends multihazard data
-    dfm = broadcast_hazard(multihazard_data, df_in)
+    df = broadcast_hazard(multihazard_data, df_in)
    
     #interpolate fa rations and blends far ratios data
     fa_ratios = interpolate_faratios(fa_ratios, df_in.protection.unique().tolist())
-    dfmr = broadcast_return_periods(fa_ratios, dfm)
+    df = broadcast_return_periods(fa_ratios, df)
    
     #computes dk_{hazard, return} and dW_{hazard, return}
-    dk_dwmr=compute_dK_dW(dfmr)
+    df=compute_dK_dW(df)
 
     #dk_{hazard} and dW_{hazard}
-    dk_dwm = average_over_rp(dk_dwmr)
+    df = average_over_rp(df)
     
     #Sums over hazard dk, dW
-    df_dw = sum_over_hazard(dk_dwm)
+    df = sum_over_hazard(df)
     
     #resi = dk/dW, Risk to assets = EdK/prot, etc
-    df_out = calc_risk_and_resilience_from_k_w(df_dw)
+    df = calc_risk_and_resilience_from_k_w(df)
 
-    return df_out
+    return df
     
 def broadcast_hazard(hazard_info, df_in):    
     if hazard_info is None:
@@ -75,8 +75,7 @@ def compute_dK_dW(df):
     df=df.copy()    
     
     # # # # # # # # # # # # # # # # # # #
-    # MACRO
-    # # # # # # # # # # # # # # # # # # #
+    # MACRO MULTIPLIER
     
     #rebuilding exponentially to 95% of initial stock in reconst_duration
     three = np.log(1/0.05) 
@@ -91,10 +90,6 @@ def compute_dK_dW(df):
     # Calculation of macroeconomic resilience
     df["macro_multiplier"]=gamma =(mu +recons_rate)/(rho+recons_rate)   
    
-    # # # # # # # # # # # # # # # # # # #
-    # MICRO 
-    # # # # # # # # # # # # # # # # # # #
-    
     ###############################
     #Description of inequalities
     
@@ -107,49 +102,45 @@ def compute_dK_dW(df):
     
     df["cp"]=cp=   df["share1"] *df["gdp_pc_pp"]
     df["cr"]=cr=  (1 - df["pov_head"]*df["share1"])/(1-df["pov_head"])  *df["gdp_pc_pp"]
-    #Eta
-    elast=  df["income_elast"]
+    
+    ###########
+    #exposure for poor and nonpoor
+    fap =df["fap"]
+    far =df["far"]
 
     ###########"
     #vulnerabilities from total and bias
     #early-warning-adjusted vulnerability
+    vp = df["v_p"]*(1-df["pi"]*df["shew"])
+    vr= df["v_r"]*(1-df["pi"]*df["shew"])
+    
+    #losses shared within the province
     df["v_shew"]=   df["v_s"]   *(1-df["pi"]*df["shew"])
     vs_touse = df["v_s"] *(1-df["pi"]*df["shew"]) * (1-df["nat_buyout"])
         
     #Part of the losses shared at national level
     df["v_shew_shared"]   = df["v_shew"] * (1-df["nat_buyout"])
     
-    
-    vp = df["v_p"]
-    vr= df["v_r"]
+    ###########
+    #Ex-post support
 
     df["tot_p"]=tot_p=1-(1-df["social_p"])*(1-df["sigma_p"])
     df["tot_r"]=tot_r=1-(1-df["social_r"])*(1-df["sigma_r"])
     
+    ############"
+    #Eta
+    elast=  df["income_elast"]
     
-    #exposures for poor and nonpoor
-    fap =df["fap"]
-    far =df["far"]
+    ###################
+    #Welfare losses 
     
-    ######################################
-    #Welfare losses from consumption losses
-    
-    delta_W,dKapparent,dcap,dcar    =calc_delta_welfare(ph,fap,far,vp,vr,vs_touse,cp,cr,tot_p         ,tot_r,mu,gamma,rho,elast)
-    
-    #Assuming no scale up
-    dW_noupscale    ,foo,dcapns,dcarnos  =calc_delta_welfare(ph,fap,far,vp,vr,vs_touse,cp,cr,df["social_p"],df["social_r"],mu,gamma,rho,elast)
-
-    # Assuming no transfers at all
-    dW_no_transfers   ,foo,foo,foo  =calc_delta_welfare(ph,fap,far,vp,vr,vs_touse,cp,cr,0             ,0             ,mu,gamma,rho,elast)
-
+    delta_W,dKapparent,dcap,dcar =calc_delta_welfare(ph,fap,far,vp,vr,vs_touse,cp,cr,tot_p,tot_r,mu,gamma,rho,elast)
     
     #corrects from avoided losses through national risk sharing
     df["dK"] = dKapparent/(1-df["nat_buyout"])
     
     #output
     df["delta_W"]=delta_W
-    df["dW_noupscale"]=dW_noupscale
-    df["dW_no_transfers"]=dW_no_transfers
     df["dcap"]=dcap
     df["dcar"]=dcar
     df["dKtot"]=df["dK"]*df["pop"]    
@@ -162,40 +153,28 @@ def calc_risk_and_resilience_from_k_w(df):
     df=df.copy()    
     
     ############################
-    #Reference losses
-    h=1e-4
+    #Expressing welfare losses in currency 
     
     #discount rate
     rho = df["rho"]
-    
+    h=1e-4
     wprime =(welf(df["gdp_pc_pp_nat"]/rho+h,df["income_elast"])-welf(df["gdp_pc_pp_nat"]/rho-h,df["income_elast"]))/(2*h)
-    dWref   = wprime*df["dK"]
 
-    #Risk
-    
-    df["dWsurWprime"]=df["delta_W"]/wprime
-    
-    df["deltaW_nat"] = wprime *  df["dK"] * df["nat_buyout"] * df["pop"]/df["pop"].sum()
-    
+    #Risk to welfare
+    df["deltaW_nat"] = wprime * df["dK"]* df["nat_buyout"]* df["pop"]/df["pop"].sum()
     df["equivalent_cost"] =  (df["delta_W"]+df["deltaW_nat"])/wprime /df["protection"]
-    
     df["risk"]= df["equivalent_cost"]/(df["gdp_pc_pp_ref"]);
     
-    df["total_equivalent_cost"]=df["equivalent_cost"]*df["pop"];
+    ############
+    #SOCIO-ECONOMIC CAPACITY)
     
-    df["total_equivalent_cost_of_nat_buyout"]=df["total_equivalent_cost"]*df["deltaW_nat"]/(df["delta_W"])
-
-
-    ############################
-    #Risk and resilience
+    #reference losses
+    dWref   = wprime*df["dK"]
     
-    #resilience
     df["resilience"]                    =dWref/(df["delta_W"] + df["deltaW_nat"]);
-    df["resilience_no_shock"]           =dWref/df["delta_W"];
-    df["resilience_no_shock_no_uspcale"]=dWref/df["dW_noupscale"];
-    df["resilience_no_shock_no_SP"]     =dWref/df["dW_no_transfers"];
 
-    #risk to assets
+    ############
+    #RISK TO ASSETS
     df["risk_to_assets"]  =df.resilience* df.risk;
     
     return df
