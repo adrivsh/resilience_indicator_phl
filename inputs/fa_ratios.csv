@@ -1,0 +1,120 @@
+province,hazard,10,100
+Abra,river,1.0,1.8141377209018892
+Abra,coast,1.0,
+Agusan Del Norte,river,1.0,1.0817610062893082
+Agusan Del Norte,coast,1.0,
+Agusan Del Sur,river,1.0,1.335951134380454
+Agusan Del Sur,coast,1.0,
+Aklan,coast,1.0,
+Albay,coast,1.0,
+Antique,coast,1.0,
+Apayao,river,1.0,1.0
+Apayao,coast,1.0,
+Aurora,coast,1.0,
+Basilan,coast,1.0,
+Bataan,coast,1.0,
+Batanes,coast,1.0,
+Batangas,river,1.0,1.0
+Batangas,coast,1.0,
+Benguet,coast,1.0,
+Biliran,coast,1.0,
+Bohol,coast,1.0,
+Bukidnon,river,1.0,1.3305439330543933
+Bukidnon,coast,1.0,
+Bulacan,river,1.0,1.5544554455445543
+Bulacan,coast,1.0,
+Cagayan,river,1.0,1.6450344149459195
+Cagayan,coast,1.0,
+Camarines Norte,coast,1.0,
+Camarines Sur,river,1.0,1.6142697881828318
+Camarines Sur,coast,1.0,
+Camiguin,coast,1.0,
+Capiz,river,1.0,1.3526011560693643
+Capiz,coast,1.0,
+Catanduanes,coast,1.0,
+Cavite,coast,1.0,
+Cebu,coast,1.0,
+Compostela Valley,coast,1.0,
+Davao Del Norte,river,1.0,1.8423913043478262
+Davao Del Norte,coast,1.0,
+Davao Del Sur,coast,1.0,
+Davao Oriental,coast,1.0,
+Dinagat Islands,coast,1.0,
+Eastern Samar,coast,1.0,
+Guimaras,coast,1.0,
+Ifugao,river,1.0,2.126094570928196
+Ifugao,coast,1.0,
+Ilocos Norte,river,1.0,1.4691151919866445
+Ilocos Norte,coast,1.0,
+Ilocos Sur,river,1.0,1.4092009685230023
+Ilocos Sur,coast,1.0,
+Iloilo,coast,1.0,
+Isabela,river,1.0,1.7124563445867287
+Isabela,coast,1.0,
+Kalinga,river,1.0,1.3161094224924013
+Kalinga,coast,1.0,
+La Union,river,1.0,1.180327868852459
+La Union,coast,1.0,
+Laguna,river,1.0,29.838709677419356
+Laguna,coast,1.0,
+Lanao Del Norte,river,1.0,1.2358490566037736
+Lanao Del Norte,coast,1.0,
+Lanao Del Sur,river,1.0,1.0
+Lanao Del Sur,coast,1.0,
+Leyte,coast,1.0,
+Maguindanao,river,1.0,1.438573315719947
+Maguindanao,coast,1.0,
+Marinduque,coast,1.0,
+Masbate,coast,1.0,
+Metropolitan Manila,coast,1.0,
+Misamis Occidental,river,1.0,1.0
+Misamis Occidental,coast,1.0,
+Misamis Oriental,coast,1.0,
+Mountain Province,coast,1.0,
+Negros Occidental,river,1.0,1.3145161290322582
+Negros Occidental,coast,1.0,
+Negros Oriental,river,1.0,1.1
+Negros Oriental,coast,1.0,
+North Cotabato,river,1.0,1.0886699507389161
+North Cotabato,coast,1.0,
+Northern Samar,coast,1.0,
+Nueva Ecija,river,1.0,1.2864583333333335
+Nueva Ecija,coast,1.0,
+Nueva Vizcaya,river,1.0,1.2513061650992685
+Nueva Vizcaya,coast,1.0,
+Occidental Mindoro,coast,1.0,
+Oriental Mindoro,coast,1.0,
+Palawan,coast,1.0,
+Pampanga,river,1.0,1.3864059590316575
+Pampanga,coast,1.0,
+Pangasinan,river,1.0,1.215725806451613
+Pangasinan,coast,1.0,
+Quezon,river,1.0,1.0703125
+Quezon,coast,1.0,
+Quirino,coast,1.0,
+Rizal,river,1.0,1.3918918918918919
+Rizal,coast,1.0,
+Romblon,coast,1.0,
+Samar,river,1.0,1.0604534005037782
+Samar,coast,1.0,
+Sarangani,river,1.0,1.0
+Sarangani,coast,1.0,
+Shariff Kabunsuan,coast,1.0,
+Siquijor,coast,1.0,
+Sorsogon,coast,1.0,
+South Cotabato,river,1.0,1.04
+South Cotabato,coast,1.0,
+Southern Leyte,coast,1.0,
+Sultan Kudarat,river,1.0,1.2962466487935655
+Sultan Kudarat,coast,1.0,
+Sulu,coast,1.0,
+Surigao Del Norte,coast,1.0,
+Surigao Del Sur,coast,1.0,
+Tarlac,river,1.0,1.3056255247691015
+Tarlac,coast,1.0,
+Tawi-Tawi,coast,1.0,
+Zambales,coast,1.0,
+Zamboanga Del Norte,coast,1.0,
+Zamboanga Del Sur,river,1.0,1.408352668213457
+Zamboanga Del Sur,coast,1.0,
+Zamboanga Sibugay,coast,1.0,
