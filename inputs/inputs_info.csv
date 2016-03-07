@@ -1,42 +1,49 @@
-key,descriptor,weight_der,lower,upper,number_type,bandwith
-avg_prod_k,Productivity of capital,1,0,3,percent,0.2
-axfin_p,Access to finance for poor people,0.2,0,1,percent,0.2
-axfin_r,Access to finance for non-poor people,0.8,0,1,percent,0.2
-axhealth,Access to health care,1,0,1,percent,0.2
-bashs,Births attended by skilled health staff,1,0,1,percent,0.2
-fa,Exposure,1,0,1,small_percent,0.2
-fap,"Exposure, poor people",0.2,0,1,small_percent,0.2
-far,"Exposure, non-poor people",0.8,0,1,small_percent,0.2
-faref,Reference Exposure,1,0,1,small_percent,0.2
-rel_gdp_pp, Average income of the province,1,0,1,percent,0.2
-rho,Discount rate,1,,,,0.2
-gdp_pc_pp_ref, Average income in the province,1,,,,
-gdp_pc_pp, Average income in the province,1,,,,
-gdp_pc_pp_nat,National GDP per capita,1,,,,
-income_elast,Elasticity of utility,1,0,1,percent,0.2
-ophe,Out-of-pocket health expenditure,1,0,1,percent,0.2
-pe,Exposure bias,1,0,1,percent,0.2
-peref, ,1,0,1,percent,0.2
-pi,Avoided losses with early warning,1,0,1,percent,0.2
-plgp,Basic education,1,,,,
-pop,Population,,0,1,percent,0.2
-nat_buyout,Risk transferred nationally,1,0,1,percent,0.2
-pov_head,Poverty incidence,1,0,1,percent,0.2
-pov_head_ref,Poverty headcount,1,0,10,simple,0.02
-protection, Hazard (protection),1,0,1,percent,0.2
-pv,Asset-vulnerability bias,1,0,1,percent,0.3
-resilience,Socio-economic capacity,1,0,1,risk,0.3
-risk,Risk to well-being,,0,1,percent,0.2
-share1,Relative income of poor families,1,0,1,percent,0.02
-shew,Access to early warning,1,0,1,percent,0.2
-sigma_p,Effective scale up for poor people,0.2,0,1,percent,0.2
-sigma_r,Effective scale up for non-poor people,0.8,0,1,percent,0.2
-social_p,Social protection for poor people,0.2,0,1,percent,0.2
-social_r,Social protection for non-poor people,0.8,0,10,simple,0.2
-T_rebuild_K,Time to reconstruct,1,0,1,percent,0.2
-v,Vulnerability without early warning,1,0,1,percent,0.2
-v_p,Asset vulnerability (poor people),0.2,0,1,percent,0.2
-v_r,Asset vulnerability (non-poor people),0.8,0,1,percent,0.2
-v_s,Asset vulnerability (shared sector),0.8,0,1,percent,0.2
-v_shew,Asset vulnerability,1,0,1,percent,0.2
-scale_up_target,Scale-up target,1,,,,
+key,descriptor
+avg_prod_k,Productivity of capital
+axfin_p,Access to finance for poor people
+axfin_r,Access to finance for non-poor people
+axhealth,Access to health care
+bashs,Births attended by skilled health staff
+fa,Exposure
+fap,"Exposure, poor people"
+far,"Exposure, non-poor people"
+faref,Reference Exposure
+rel_gdp_pp, Average income of the province
+rho,Discount rate
+gdp_pc_pp_ref, Average income in the province
+gdp_pc_pp, Average income in the province
+gdp_pc_pp_nat,National GDP per capita
+income_elast,Elasticity of utility
+ophe,Out-of-pocket health expenditure
+pi,Avoided losses with early warning
+plgp,Basic education
+pop,Population
+nat_buyout,Risk transferred nationally
+pov_head,Poverty incidence
+pov_head_ref,Poverty headcount
+protection, Hazard (protection)
+pv,Asset-vulnerability bias
+resilience,Socio-economic capacity
+risk,Risk to well-being
+share1,Relative income of poor families
+shew,Access to early warning
+sigma_p,Effective scale up for poor people
+sigma_r,Effective scale up for non-poor people
+social_p,Social protection for poor people
+social_r,Social protection for non-poor people
+T_rebuild_K,Time to reconstruct
+v,Vulnerability without early warning
+v_p,Asset vulnerability (poor people)
+v_r,Asset vulnerability (non-poor people)
+v_s,Asset vulnerability (shared sector)
+v_shew,Asset vulnerability
+scale_up_target,Scale-up target
+dK,Average asset losses per person in the event of a disaster
+delta_W,Average welfare losses in the event of a disaster
+dcap,Average consumption losses for poor people in the event of a disaster
+dcar,Average consumption losses for nonpoor people in the event of a disaster
+dKtot,Average asset losses across persons in the event of a disaster
+deltaW_nat,Welfare losses in the other provinces (due to risk sharing) in the event of a disaster
+dWpc_curency,Expected welfare losses per capita due to natural disasters in the province
+dWtot_currency,Total expected welfare losses due to natural disasters in the province
+risk_to_assets,Total expected welfare losses due to natural disasters in the province as a fraction of local GDP

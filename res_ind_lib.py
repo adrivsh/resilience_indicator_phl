@@ -150,7 +150,7 @@ def compute_dK_dW(df):
     df_out["delta_W"]=delta_W
     df_out["dcap"]=dcap
     df_out["dcar"]=dcar
-    df_out["dKtot"]=df_out["dK"]*df["pop"]    
+    df_out["dKtot"]=df_out["dK"]*df["pop"]/df["protection"]    
    
     return df_out
         
@@ -169,9 +169,9 @@ def calc_risk_and_resilience_from_k_w(df):
 
     #Risk to welfare
     df["deltaW_nat"] = wprime * df["dK"]* df["nat_buyout"]* df["pop"]/df["pop"].sum()
-    df["equivalent_cost"] =  (df["delta_W"]+df["deltaW_nat"])/wprime /df["protection"]
-    df["risk"]= df["equivalent_cost"]/(df["gdp_pc_pp_ref"]);
-    df["total_equivalent_cost"]=df["equivalent_cost"]*df["pop"];
+    df["dWpc_curency"] =  (df["delta_W"]+df["deltaW_nat"])/wprime /df["protection"]
+    df["risk"]= df["dWpc_curency"]/(df["gdp_pc_pp_ref"]);
+    df["dWtot_currency"]=df["dWpc_curency"]*df["pop"];
     
     ############
     #SOCIO-ECONOMIC CAPACITY)

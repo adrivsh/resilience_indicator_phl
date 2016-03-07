@@ -1,17 +1,12 @@
 T_rebuild_K
-axfin_p
-axfin_r
 fap
 far
-gdp_pc_pp
-gdp_pc_pp_nat
-gdp_pc_pp_ref
 nat_buyout
 pi
 pov_head
 protection
 rel_gdp_pp
-rho
+share1
 shew
 sigma_p
 sigma_r
@@ -19,4 +14,3 @@ social_p
 social_r
 v_p
 v_r
-v_s
