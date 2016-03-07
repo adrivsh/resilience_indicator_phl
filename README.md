@@ -13,7 +13,10 @@ For training purposes, focus on the first two following two notebooks. You can *
 * **[data_gathering_demo](data_gathering_demo.ipynb)** demonstrates how Python and Pandas can be used to gather data from different sources.
 All the data used now is only for proof-of-concept purpose, and can be replaced with data provided by the Philippine government.
 
+
+To go more in depth:
 * **[draw_maps](draw_maps.ipynb)** is the code used to draw maps from a dataset and a blank SVG map.
+* **[systematic_policy_assessment](systematic_policy_assessment.ipynb)** computes the elasticity of welfare and asset losses to all variables in the model, and **[render_policy_assessment](render_policy_assessment.ipynb)** plots the results.
 
 ## Data
 All the data required to run the resilience indicator is gathered in [all_data_compiled.xlsx](all_data_compiled.xlsx).
@@ -33,7 +36,7 @@ Here is how to *run* these notebooks in your computer.
 This program **requires python3** and several libraries. The recommendation is to rely on the **Anaconda python 3 distribution**, [available for free online](https://www.continuum.io/downloads). The standard anaconda installation includes all dependencies of this program.
  Make sure you chose **python 3.x, *not* 2.x**.
 
-**Optional dependencies** to render maps are [Inkscape](https://inkscape.org/en/) to convert SVG in PDF,  and [imagemagick](http://www.imagemagick.org/script/index.php) to convert PDF to PNG and resize images programatically. Rendering provincial cards may additionally require pdfcrop and ghostscript.
+**Optional dependencies** to render maps are [Inkscape](https://inkscape.org/en/) to convert SVG in PDF,  and [imagemagick](http://www.imagemagick.org/script/index.php) to convert PDF to PNG and resize images programatically. Joining all the policy assessment cards into a single pdf requires [ghostscript](http://www.ghostscript.com/download/gsdnld.html).
 
 All requirements and optional dependencies are available for free on all plateforms. Some of them are included by default in Linux and Mac distrirbutions. To use them make sure that they are installed and accessible in the PATH of your machine. 
 
