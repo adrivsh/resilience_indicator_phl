@@ -209,7 +209,7 @@
     }
 .iloilo
     {  
-       fill: #2F7FBC;
+       fill: #E0E0E0;
        stroke:#000000;
        stroke-width:2;
     }
@@ -407,7 +407,7 @@
     }
 .sulu
     {  
-       fill: #083572;
+       fill: #E0E0E0;
        stroke:#000000;
        stroke-width:2;
     }
@@ -425,7 +425,7 @@
     }
 .tawi-tawi
     {  
-       fill: #084388;
+       fill: #E0E0E0;
        stroke:#000000;
        stroke-width:2;
     }

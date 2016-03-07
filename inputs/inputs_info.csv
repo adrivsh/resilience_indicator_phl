@@ -21,6 +21,7 @@ pop,Population
 nat_buyout,Risk transferred nationally
 pov_head,Poverty incidence
 pov_head_ref,Poverty headcount
+protectionref, Hazard (protection) (ref)
 protection, Hazard (protection)
 pv,Asset-vulnerability bias
 resilience,Socio-economic capacity
