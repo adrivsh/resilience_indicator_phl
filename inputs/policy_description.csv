@@ -1,42 +1,24 @@
-key,descriptor,concerns
-avg_prod_k,Productivity of capital,all
-axfin_p,Access to finance for poor people,p
-axfin_r,Access to finance for non-poor people,r
-axhealth,Access to health care,all
-bashs,Births attended by skilled health staff,all
-fa,Exposure,all
-fap,Reduce exposure of poor households,p
-far,Reduce exposure of nonpoor households,r
-faref,Reference Exposure,all
-rel_gdp_pp,Increase average income in the province,all
-rho,Discount rate,all
-gdp_pc_pp_ref, Average income in the province,all
-gdp_pc_pp, Average income in the province,all
-gdp_pc_pp_nat,National GDP per capita,all
-income_elast,Elasticity of utility,all
-ophe,Out-of-pocket health expenditure,all
-pe,Exposure bias,all
-peref, ,all
-pi,Increase reactivity to early-warnings,all
-plgp,Basic education,all
-pop,Population,all
-nat_buyout,Increase share of risk transferred nationally,all
-pov_head,Decrease poverty incidence,all
-pov_head_ref,Poverty headcount,all
-protection,Improve protection,all
-pv,Asset-vulnerability bias,all
-resilience,Socio-economic capacity,all
-risk,Risk to well-being,all
-share1,Increase income of poor families,all
-shew,Improve access to early warning,all
-sigma_p,Improve scale-up of social protection for poor households,p
-sigma_r,Improve scale-up of social protection for nonpoor households,r
-social_p,Increase social protection for poor households,p
-social_r,Increase social protection for nonpoor households,r
-T_rebuild_K,Reduce time to reconstruct,all
-v,Vulnerability without early warning,all
-v_p,Reduce asset vulnerability for poor households,p
-v_r,Reduce asset vulnerability for nonpoor households,r
-v_s,Asset vulnerability (shared sector),all
-v_shew,Asset vulnerability,all
-scale_up_target,Scale-up target,all
+key,descriptor,concerns,concerns,increment
+avg_prod_k,Productivity of capital,all,all,0.01
+axfin_p,Access to finance for poor people,p,p,0.01
+axfin_r,Access to finance for non-poor people,r,r,0.01
+axhealth,Access to health care,all,all,0.01
+fap,Reduce exposure of poor households by {dh:.0%},p,p,0.01
+far,Reduce exposure of nonpoor households by {dh:.0%},r,r,0.01
+rel_gdp_pp,Increase average income in the province {dh:.0%},all,all,0.01
+rho,Discount rate,all,all,0.01
+income_elast,Elasticity of utility,all,all,0.01
+pi,Increase reactivity to early-warnings by {dh:.0%},all,all,0.01
+plgp,Basic education,all,all,0.01
+nat_buyout,Increase share of risk transferred nationally by {dh:.0%},all,all,0.01
+pov_head,Decrease poverty incidence by {dh:.0%},all,all,0.01
+protection,Improve protection by {dh:.0f} yr,all,all,1
+share1,Increase income of poor families by {dh:.0%},all,all,0.01
+shew,Improve access to early warning by {dh:.0%},all,all,0.01
+sigma_p,Improve scale-up of social protection for poor households by {dh:.0%},p,p,0.01
+sigma_r,Improve scale-up of social protection for nonpoor households by {dh:.0%},r,r,0.01
+social_p,Increase social protection for poor households by {dh:.0%},p,p,0.01
+social_r,Increase social protection for nonpoor households by {dh:.0%},r,r,0.01
+T_rebuild_K,Reduce time to reconstruct by {dh:.0f} yr,all,all,1
+v_p,Reduce asset vulnerability for poor households by {dh:.0%},p,p,0.01
+v_r,Reduce asset vulnerability for nonpoor households by {dh:.0%},r,r,0.01

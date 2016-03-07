@@ -12,7 +12,7 @@ tinyfont= {'family' : 'sans serif','size'   : 8}
 
 plt.rc('font', **font)
 
-def autolabel(ax,rects,color,**kwargs):
+def autolabel(ax,rects,color, sigdigits,  **kwargs):
     # attach some data labels
     for rect in rects:
         h = rect.get_height()
@@ -20,7 +20,7 @@ def autolabel(ax,rects,color,**kwargs):
         y = rect.get_y()
         w = rect.get_width()
         value = x if x<0 else w
-        stri='%1.1f'%(round_sig(value))
+        stri=str(fancy_round(value,sigdigits))
         
         #remove trailing zeros
         if "." in stri:
@@ -34,19 +34,18 @@ def autolabel(ax,rects,color,**kwargs):
             stri = stri+' '
         else:
             stri = ' '+stri
-                
+        # print(value,stri)        
         ax.text(value, y+0.4*h, stri, ha="right" if x<0 else 'left', va='center', color=color , **kwargs)
 
         
-def render_pol_cards(ders,colors,policy_descriptions,province_list=None):
+def render_pol_cards(ders,colors,policy_descriptions,unit,size,province_list=None):
     if province_list is None:
         province_list=ders.unstack("var").index
     
     for p in province_list:
         progress_reporter(p)    
             
-        # plt.figure(figsize=(10,15))
-        toplot = ders.ix[p]
+        toplot = unit["multiplier"]*(ders.ix[p].mul(size,axis=0)).dropna()   #.div(base.ix[p],axis=0)
         toplot = toplot.mul(-np.sign(toplot.dWtot_currency),axis=0)
         toplot = toplot[["dWtot_currency","dKtot"]].sort_values("dWtot_currency",ascending=False)       
 
@@ -54,22 +53,21 @@ def render_pol_cards(ders,colors,policy_descriptions,province_list=None):
         n=len(labels)
 
         ind=np.arange(n)
-        fig, ax = plt.subplots(figsize=(5,n/2))
+        fig, ax = plt.subplots(figsize=(7,n/2))
 
         plt.vlines(0, 0, n, colors="black")    
 
+        rects1 = ax.barh(ind,toplot["dKtot"],height=height, **colors.ix["dKtot"]
+               )
         rects2 = ax.barh(ind+height,  toplot["dWtot_currency"],height=height, **colors.ix["dWtot_currency"]
                 )
 
-        rects1 = ax.barh(ind,toplot["dKtot"],height=height, **colors.ix["dKtot"]
-               )
-
         # add some text for labels, title and axes ticks
-        ax.set_xlabel('Relative change (%)')
+        ax.set_xlabel(unit["string"])
         ax.set_yticks(ind+height)
-        ax.set_yticklabels(policy_descriptions[labels]  )
+        ax.set_yticklabels(policy_descriptions[labels]+"   "  )
 
-        plt.xlim(-1.15,1.15)
+        # plt.xlim(-1.15,1.15)
 
 
         # remove ticks 
@@ -83,10 +81,11 @@ def render_pol_cards(ders,colors,policy_descriptions,province_list=None):
             tic.tick1On = tic.tick2On = False
         # ax.xaxis.set_visible(False )
 
-        autolabel(ax,rects1,colors.ix["dKtot","edgecolor"],**tinyfont)
-        autolabel(ax,rects2,colors.ix["dWtot_currency","edgecolor"],**smallfont)
+        autolabel(ax,rects1,colors.ix["dKtot","edgecolor"],2,**tinyfont)
+        autolabel(ax,rects2,colors.ix["dWtot_currency","edgecolor"],2,**smallfont)
 
-        # ax.legend( (rects1[0], rects2[0]), ('Asset losses', 'Welfare losses'), loc="lower right",frameon=False )
+        # ax.legend( (rects2[0],rects1[0]), ( 'Effect on welfare','Avoided asset losses'), loc="lower right",frameon=False )
+
 
         ax.annotate("Effect on asset losses",  xy=(0,n-1+height/2),xycoords='data',ha="left",va="center",
                       xytext=(20, -5), textcoords='offset points', 
@@ -115,7 +114,7 @@ import sys
 from IPython.display import clear_output
 
 
-def merge_cardfiles_files(country_list,outputname):
+def merge_cardfiles(country_list,outputname):
 
     #goes to the write directory
     glob.os.chdir("cards/")
