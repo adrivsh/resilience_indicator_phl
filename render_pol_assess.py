@@ -53,7 +53,7 @@ def render_pol_cards(ders,colors,policy_descriptions,unit,size,province_list=Non
         n=len(labels)
 
         ind=np.arange(n)
-        fig, ax = plt.subplots(figsize=(7,n/2))
+        fig, ax = plt.subplots(figsize=(3.5,n/2))
 
         plt.vlines(0, 0, n, colors="black")    
 
@@ -65,7 +65,7 @@ def render_pol_cards(ders,colors,policy_descriptions,unit,size,province_list=Non
         # add some text for labels, title and axes ticks
         ax.set_xlabel(unit["string"])
         ax.set_yticks(ind+height)
-        ax.set_yticklabels(policy_descriptions[labels]+"   "  )
+        ax.set_yticklabels(policy_descriptions[labels]+"     "  )
 
         # plt.xlim(-1.15,1.15)
 
@@ -79,6 +79,8 @@ def render_pol_cards(ders,colors,policy_descriptions,unit,size,province_list=Non
         #removes ticks 
         for tic in ax.xaxis.get_major_ticks() + ax.yaxis.get_major_ticks():
             tic.tick1On = tic.tick2On = False
+        
+        ax.xaxis.set_ticklabels([])
         # ax.xaxis.set_visible(False )
 
         autolabel(ax,rects1,colors.ix["dKtot","edgecolor"],2,**tinyfont)
@@ -103,6 +105,17 @@ def render_pol_cards(ders,colors,policy_descriptions,unit,size,province_list=Non
 
         plt.savefig("cards/"+file_name_formater(p)+".pdf", bbox_inches="tight")
             
+       
+#Load the excel data file into a dataframe (table)
+# df=pd.read_excel("inputs/all_data_compiled.xlsx", index_col=0, skiprows=[0, 2]  ) 
+
+# base=pd.DataFrame([policy_info.concerns]*df.shape[0], index=df.index )
+# for c in base:
+#     base[c].replace("p",df.pov_head, inplace=True)
+#     base[c].replace("all",1, inplace=True)
+#     base[c].replace("r",1-df.pov_head, inplace=True)
+# base.head()
+       
        
 def file_name_formater(x):
     return x.lower().replace(" ","_").replace("\\","")

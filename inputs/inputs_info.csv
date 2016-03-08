@@ -45,6 +45,6 @@ dcap,Average consumption losses for poor people in the event of a disaster
 dcar,Average consumption losses for nonpoor people in the event of a disaster
 dKtot,Average asset losses across persons in the event of a disaster
 deltaW_nat,Welfare losses in the other provinces (due to risk sharing) in the event of a disaster
-dWpc_curency,Expected welfare losses per capita due to natural disasters in the province
-dWtot_currency,Total expected welfare losses due to natural disasters in the province
-risk_to_assets,Total expected welfare losses due to natural disasters in the province as a fraction of local GDP
+dWpc_curency,Expected welfare losses per capita due to natural disasters 
+dWtot_currency,Total expected welfare losses due to natural disasters
+risk_to_assets,Total expected assest losses due to natural disasters as a fraction of local GDP

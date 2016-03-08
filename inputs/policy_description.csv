@@ -1,24 +1,20 @@
 key,descriptor,concerns,concerns,increment
-avg_prod_k,Productivity of capital,all,all,0.01
-axfin_p,Access to finance for poor people,p,p,0.01
-axfin_r,Access to finance for non-poor people,r,r,0.01
-axhealth,Access to health care,all,all,0.01
-fap,Reduce exposure of poor households by {dh:.0%},p,p,0.01
-far,Reduce exposure of nonpoor households by {dh:.0%},r,r,0.01
-rel_gdp_pp,Increase average income in the province {dh:.0%},all,all,0.01
+fap,Exposure of poor households (-{dh:.0%}),p,p,0.01
+far,Exposure of nonpoor households (-{dh:.0%}),r,r,0.01
+rel_gdp_pp,Average income in the province (+{dh:.0%}),all,all,0.01
 rho,Discount rate,all,all,0.01
 income_elast,Elasticity of utility,all,all,0.01
-pi,Increase reactivity to early-warnings by {dh:.0%},all,all,0.01
+pi,Reactivity to early-warnings (+{dh:.0%}),all,all,0.01
 plgp,Basic education,all,all,0.01
-nat_buyout,Increase share of risk transferred nationally by {dh:.0%},all,all,0.01
-pov_head,Decrease poverty incidence by {dh:.0%},all,all,0.01
-protection,Improve protection by {dh:.0f} yr,all,all,1
-share1,Increase income of poor families by {dh:.0%},all,all,0.01
-shew,Improve access to early warning by {dh:.0%},all,all,0.01
-sigma_p,Improve scale-up of social protection for poor households by {dh:.0%},p,p,0.01
-sigma_r,Improve scale-up of social protection for nonpoor households by {dh:.0%},r,r,0.01
-social_p,Increase social protection for poor households by {dh:.0%},p,p,0.01
-social_r,Increase social protection for nonpoor households by {dh:.0%},r,r,0.01
-T_rebuild_K,Reduce time to reconstruct by {dh:.0f} yr,all,all,1
-v_p,Reduce asset vulnerability for poor households by {dh:.0%},p,p,0.01
-v_r,Reduce asset vulnerability for nonpoor households by {dh:.0%},r,r,0.01
+nat_buyout,Share of risk transferred nationally (+{dh:.0%}),all,all,0.01
+pov_head,Poverty incidence (-{dh:.0%}),all,all,0.01
+protection,Protection (+{dh:.0f} yr),all,all,1
+share1,Income of poor families (+{dh:.0%}),all,all,0.01
+shew,Access to early warning (+{dh:.0%}),all,all,0.01
+sigma_p,Scale-up of social protection for poor households (+{dh:.0%}),p,p,0.01
+sigma_r,Scale-up of social protection for nonpoor households (+{dh:.0%}),r,r,0.01
+social_p,Social protection for poor households (+{dh:.0%}),p,p,0.01
+social_r,Social protection for nonpoor households (+{dh:.0%}),r,r,0.01
+T_rebuild_K,Time to reconstruct (-{dh:.0f} yr),all,all,1
+v_p,Asset vulnerability for poor households (+{dh:.0%}),p,p,0.01
+v_r,Asset vulnerability for nonpoor households (+{dh:.0%}),r,r,0.01
