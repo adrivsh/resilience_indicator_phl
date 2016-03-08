@@ -118,8 +118,8 @@ def compute_dK_dW(df):
     ###########"
     #vulnerabilities from total and bias
     #early-warning-adjusted vulnerability
-    vp = df["v_p"]*(1-df["pi"]*df["shew"])
-    vr= df["v_r"]*(1-df["pi"]*df["shew"])
+    vp = df["v_p"]*(1-df["pi"]*df["shew"])* (1-df["nat_buyout"])
+    vr= df["v_r"]*(1-df["pi"]*df["shew"])* (1-df["nat_buyout"])
     
     #losses shared within the province
     v_shew=   df["v_s"]   *(1-df["pi"]*df["shew"])
