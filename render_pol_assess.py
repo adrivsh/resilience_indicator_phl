@@ -2,6 +2,11 @@ from fancy_round import *
 from progress_reporter import *
 import matplotlib.pyplot as plt
 
+from subprocess import Popen  #to call other programs from python
+import sys #one function, flush, to force jupyter to print a message immediately
+import glob  #to make folders, move files, etc.
+
+
 #height of the bars
 height = 0.40  
 
@@ -14,7 +19,7 @@ tinyfont= {'family' : 'sans serif','size'   : 8}
 plt.rc('font', **font)
 
 def render_pol_cards(ders,colors,policy_descriptions,unit,size,province_list=None):
-    """Renders the scorecards
+    """Renders the policy cards
     ders: dataframe indexed by (var). Column is multi-indexed: provinces x ["dWtot_currency","dKtot"]. The impact of marginally increasing var in province on dw and dK.
     policy_descriptions. Series index by variable. Explains what the policy is. eg "Decrease poverty to 0.1%" 
     colors: dataframe. Columns: ["dWtot_currency","dKtot"]. Rows: kwargs to pass to plt.barh for formatting the color bars.
@@ -37,7 +42,7 @@ def render_pol_cards(ders,colors,policy_descriptions,unit,size,province_list=Non
         #assumes the policy is framed in terms of what increases welfare ("decrease poverty", not "increase poverty")
         toplot = toplot.mul(-np.sign(toplot.dWtot_currency),axis=0)
         toplot = toplot[["dWtot_currency","dKtot"]].sort_values("dWtot_currency",ascending=False)       
-
+        #number of policy experiments to render
         n=toplot.shape[0]
         
         #new figure
@@ -89,6 +94,8 @@ def render_pol_cards(ders,colors,policy_descriptions,unit,size,province_list=Non
                                         connectionstyle="arc3,rad=+0.13",color=colors.edgecolor.dWtot_currency
                                         ), **smallfont)
 
+        
+        glob.os.makedirs("cards",exist_ok=True)
         #exports to pdf
         plt.savefig("cards/"+file_name_formater(p)+".pdf",
                     bbox_inches="tight" #ensures the policy label are not cropped out
@@ -138,8 +145,6 @@ def file_name_formater(string):
     """Ensures string does not contain special characters so it can be used as a file name"""    
     return string.lower().replace(" ","_").replace("\\","")
        
-from subprocess import Popen
-import sys, os
 
 def merge_cardfiles(list,outputname):
     """Merges individual policy card pdf to a single multi page pdf with all the cards. Requires ghostscipt."""
@@ -149,7 +154,7 @@ def merge_cardfiles(list,outputname):
     command= ""
     i=1
     for name in list:
-        command+="(cards/{name}) run [ /Page {page} /Title ({name}) /OUT pdfmark \n".format(name=file_name_formater(name)+".pdf",page=i)
+        command+="({name}) run [ /Page {page} /Title ({simplename}) /OUT pdfmark \n".format(name=name.replace("\\","/"),simplename=glob.os.path.splitext(glob.os.path.basename(name))[0].title(),page=i)
         i+=1
 
     #writes the command for ghostscipt
@@ -167,26 +172,21 @@ def merge_cardfiles(list,outputname):
     print("Merging cards done")
     
     #deletes GS command
-    os.remove("control.ps")
-
-import  glob
-from subprocess import call, Popen    
-import shutil
-import os
+    glob.os.remove("control.ps")
 
 def convert_pdf_to_png(folder):
-    """Convert individual pdf scorecards to PNG. Requires imagemagick. 
+    """Convert individual pdf cards to PNG. Requires imagemagick. 
     Moves the resulting png to a subolfer""" 
     
-    folder = os.path.dirname(folder)
+    folder = glob.os.path.dirname(folder)
         
     #creates the destination subdir
-    destinationpath =os.path.join(folder,"png") 
+    destinationpath =glob.os.path.join(folder,"png") 
     glob.os.makedirs(destinationpath,exist_ok=True) 
     
     #starts imagemagick in a new process 
     q=Popen("mogrify -density 150 -path {dest} -format png {folder}/*.pdf".format(folder=folder, dest=destinationpath));
-    print("Converting scorecards, coco....")
+    print("Converting cards....")
     sys.stdout.flush()
     
     #waits for imagemagick to finish
