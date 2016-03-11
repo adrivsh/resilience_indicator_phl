@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from scipy.special import erf
 from scipy.interpolate import interp1d
 
 def compute_resiliences(df_in, fa_ratios=None, multihazard_data =None):
