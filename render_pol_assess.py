@@ -174,33 +174,25 @@ from subprocess import call, Popen
 import shutil
 import os
 
-def convert_pdf_to_png()
+def convert_pdf_to_png(folder):
     """Convert individual pdf scorecards to PNG. Requires imagemagick. 
-    Moves the resulting png to a subolfer"""  ##TODO do this directly with mogrify
+    Moves the resulting png to a subolfer""" 
+    
+    folder = os.path.dirname(folder)
+        
+    #creates the destination subdir
+    destinationpath =os.path.join(folder,"png") 
+    glob.os.makedirs(destinationpath,exist_ok=True) 
     
     #starts imagemagick in a new process 
-    q=Popen("mogrify -density 150 -format png cards/*.pdf");
-    print("Converting scorecards....")
+    q=Popen("mogrify -density 150 -path {dest} -format png {folder}/*.pdf".format(folder=folder, dest=destinationpath));
+    print("Converting scorecards, coco....")
     sys.stdout.flush()
     
     #waits for imagemagick to finish
     q.communicate()
     print("conversion to png done")
 
-    ###MOVE resulting PNG to a subfolder
-    
-    #lists all files in cards/
-    sourcepath="cards"
-    source = os.listdir(sourcepath)
-
-    #creates the destination subdir
-    destinationpath = "cards/png/"
-    glob.os.makedirs(destinationpath,exist_ok=True) 
-
-    #moves each png to the subdir
-    for files in source:
-        if files.endswith('.png'):
-            shutil.move(os.path.join(sourcepath,files), os.path.join(destinationpath,files))
 
 
 
