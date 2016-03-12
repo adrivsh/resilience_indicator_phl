@@ -1,40 +1,7 @@
 import matplotlib.pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap
 import pandas as pd
 import numpy as np
 
-def n_to_one_normalizer(s,n=0):
-  #affine transformation from s to [n,1]      
-    y =(s-s.min())/(s.max()-s.min())
-    return n+(1-n)*y
-    
-def bins_normalizer(x,n=7):
-  #bins the data in n regular bins (no clue how this is better than pd.bin)     
-    n=n-1
-    y= n_to_one_normalizer(x,0)  #0 to 1 numbe
-    return np.floor(n*y)/n
-
-def quantile_normalizer(column, nb_quantile=5):
-  #bbins in quintiles      
-    return (pd.qcut(column, nb_quantile,labels=False))/(nb_quantile-1)
-
-def num_to_hex(x):
-    h = hex(int(255*x)).split('x')[1]
-    if len(h)==1:
-        h="0"+h
-    return h
-
-def data_to_rgb(serie,color_maper=plt.cm.get_cmap("Blues_r"), normalizer = n_to_one_normalizer, norm_param = 0, na_color = "#e0e0e0"):
-    
-    data_n = normalizer(serie,norm_param)
-
-    #here matplolib color mappers will just fill nas with the lowest color in the colormap
-    colors = pd.DataFrame(color_maper(data_n),index=serie.index, columns=["r","g","b","a"]).applymap(num_to_hex)
-    
-    out = "#"+colors.r+colors.g+colors.b
-    out[serie.isnull()]=na_color
-    return out.str.upper()
-    
 ############################################################################# 
 #######################         FROM SVG              ####################### 
 #############################################################################     
@@ -77,13 +44,12 @@ def make_map_from_svg(series_in, svg_file_path, outname, color_maper=plt.cm.get_
     stroke-width:2;
     }
     """
-
     
     #builds the style line by line (using lower case identifiers)
     for c in series_in.index:
         style= style       + style_base.format(depname=c,color=color[c])+ "\n"   
 
-
+    #output file name
     target_name = outfolder+"map_of_"+outname
 
     #read input 
@@ -133,13 +99,11 @@ def make_map_from_svg(series_in, svg_file_path, outname, color_maper=plt.cm.get_
         if data_missing_in_series:
             print("Missing in series: "+"; ".join(map(back_to_title,data_missing_in_series)))
 
- 
- 
     if shutil.which("inkscape") is None:
         print("cannot convert SVG to PNG. Install Inkscape to do so.")
         could_do_png_map = False
     else:
-        #Attempts to inkscapes SVG to PNG    
+        #Attempts to inkscape SVG to PNG    
         process=Popen("inkscape -f {map}.svg -e {map}.png -d 150".format(map=target_name, outfolder = outfolder) , shell=True, stdout=PIPE,   stderr=PIPE)
         out, err = process.communicate()
         errcode = process.returncode
@@ -201,3 +165,40 @@ def make_legend(serie,cmap,label="",path=None):
     
     
     return Image(path+".png", width=img_width   )  
+
+    
+def n_to_one_normalizer(s,n=0):
+  #affine transformation from s to [n,1]      
+    y =(s-s.min())/(s.max()-s.min())
+    return n+(1-n)*y
+    
+def bins_normalizer(x,n=7):
+  #bins the data in n regular bins (no clue how this is better than pd.bin)     
+    n=n-1
+    y= n_to_one_normalizer(x,0)  #0 to 1 numbe
+    return np.floor(n*y)/n
+
+def quantile_normalizer(column, nb_quantile=5):
+  #bbins in quintiles      
+    return (pd.qcut(column, nb_quantile,labels=False))/(nb_quantile-1)
+
+def num_to_hex(x):
+    h = hex(int(255*x)).split('x')[1]
+    if len(h)==1:
+        h="0"+h
+    return h
+
+def data_to_rgb(serie,color_maper=plt.cm.get_cmap("Blues_r"), normalizer = n_to_one_normalizer, norm_param = 0, na_color = "#e0e0e0"):
+    """This functions transforms  data series into a series of color, using a colormap."""
+
+    data_n = normalizer(serie,norm_param)
+
+    #here matplolib color mappers will just fill nas with the lowest color in the colormap
+    colors = pd.DataFrame(color_maper(data_n),index=serie.index, columns=["r","g","b","a"]).applymap(num_to_hex)
+
+    out = "#"+colors.r+colors.g+colors.b
+    out[serie.isnull()]=na_color
+    return out.str.upper()
+
+
+    

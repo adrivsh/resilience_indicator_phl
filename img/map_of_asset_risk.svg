@@ -11,37 +11,37 @@
     }
     .abra
     {  
-       fill: #FCCAB6;
+       fill: #FDD6C5;
        stroke:#000000;
        stroke-width:2;
     }
 .agusan_del_norte
     {  
-       fill: #EF3E2E;
+       fill: #E63228;
        stroke:#000000;
        stroke-width:2;
     }
 .agusan_del_sur
     {  
-       fill: #FCC3AC;
+       fill: #FCB297;
        stroke:#000000;
        stroke-width:2;
     }
 .aklan
     {  
-       fill: #67000D;
+       fill: #800610;
        stroke:#000000;
        stroke-width:2;
     }
 .albay
     {  
-       fill: #FEEBE1;
+       fill: #FEE7DD;
        stroke:#000000;
        stroke-width:2;
     }
 .antique
     {  
-       fill: #F4513A;
+       fill: #F45039;
        stroke:#000000;
        stroke-width:2;
     }
@@ -53,25 +53,25 @@
     }
 .aurora
     {  
-       fill: #FDD6C5;
+       fill: #FDDFD1;
        stroke:#000000;
        stroke-width:2;
     }
 .basilan
     {  
-       fill: #FEE4D8;
+       fill: #FDDDCE;
        stroke:#000000;
        stroke-width:2;
     }
 .bataan
     {  
-       fill: #FEF0E9;
+       fill: #FEF1EB;
        stroke:#000000;
        stroke-width:2;
     }
 .batangas
     {  
-       fill: #FEF4EF;
+       fill: #FFF5F0;
        stroke:#000000;
        stroke-width:2;
     }
@@ -83,127 +83,127 @@
     }
 .biliran
     {  
-       fill: #F44E38;
+       fill: #F6593F;
        stroke:#000000;
        stroke-width:2;
     }
 .bohol
     {  
-       fill: #FCB89D;
+       fill: #FCAC90;
        stroke:#000000;
        stroke-width:2;
     }
 .bukidnon
     {  
-       fill: #FEF1EA;
+       fill: #FEF0E9;
        stroke:#000000;
        stroke-width:2;
     }
 .bulacan
     {  
-       fill: #FEF2EC;
+       fill: #FEF3EE;
        stroke:#000000;
        stroke-width:2;
     }
 .cagayan
     {  
-       fill: #FDD3C0;
+       fill: #FDDACA;
        stroke:#000000;
        stroke-width:2;
     }
 .camarines_norte
     {  
-       fill: #FB7252;
+       fill: #F6573E;
        stroke:#000000;
        stroke-width:2;
     }
 .camarines_sur
     {  
-       fill: #FDDACA;
+       fill: #FCCDB9;
        stroke:#000000;
        stroke-width:2;
     }
 .camiguin
     {  
-       fill: #FCC0A8;
+       fill: #FCB99F;
        stroke:#000000;
        stroke-width:2;
     }
 .capiz
     {  
-       fill: #FDCEBA;
+       fill: #FDD5C3;
        stroke:#000000;
        stroke-width:2;
     }
 .catanduanes
     {  
-       fill: #FCCDB9;
+       fill: #FCC9B4;
        stroke:#000000;
        stroke-width:2;
     }
 .cavite
     {  
-       fill: #FCA98D;
+       fill: #FCCDB9;
        stroke:#000000;
        stroke-width:2;
     }
 .cebu
     {  
-       fill: #FCB499;
+       fill: #FCC1A9;
        stroke:#000000;
        stroke-width:2;
     }
 .compostela_valley
     {  
-       fill: #FEEBE2;
+       fill: #FEEBE1;
        stroke:#000000;
        stroke-width:2;
     }
 .davao_del_norte
     {  
-       fill: #FEF0E9;
+       fill: #FEEFE8;
        stroke:#000000;
        stroke-width:2;
     }
 .davao_del_sur
     {  
-       fill: #FEEAE0;
+       fill: #FEECE3;
        stroke:#000000;
        stroke-width:2;
     }
 .davao_oriental
     {  
-       fill: #FDDBCB;
+       fill: #FDCFBC;
        stroke:#000000;
        stroke-width:2;
     }
 .eastern_samar
     {  
-       fill: #FB7C5C;
+       fill: #E0E0E0;
        stroke:#000000;
        stroke-width:2;
     }
 .guimaras
     {  
-       fill: #CA171C;
+       fill: #E63228;
        stroke:#000000;
        stroke-width:2;
     }
 .ifugao
     {  
-       fill: #FEE9E0;
+       fill: #FEECE3;
        stroke:#000000;
        stroke-width:2;
     }
 .ilocos_norte
     {  
-       fill: #FEF2EC;
+       fill: #FEF3EE;
        stroke:#000000;
        stroke-width:2;
     }
 .ilocos_sur
     {  
-       fill: #FEF2EC;
+       fill: #FEF3ED;
        stroke:#000000;
        stroke-width:2;
     }
@@ -215,67 +215,67 @@
     }
 .isabela
     {  
-       fill: #FEE2D5;
+       fill: #FEE5D9;
        stroke:#000000;
        stroke-width:2;
     }
 .kalinga
     {  
-       fill: #FEE5D9;
+       fill: #FEE9DF;
        stroke:#000000;
        stroke-width:2;
     }
 .la_union
     {  
-       fill: #FEF4EF;
+       fill: #FFF5F0;
        stroke:#000000;
        stroke-width:2;
     }
 .laguna
     {  
-       fill: #FEF2EC;
+       fill: #FEF3EE;
        stroke:#000000;
        stroke-width:2;
     }
 .lanao_del_norte
     {  
-       fill: #FEE2D5;
+       fill: #FEE1D3;
        stroke:#000000;
        stroke-width:2;
     }
 .lanao_del_sur
     {  
-       fill: #FEEAE0;
+       fill: #E0E0E0;
        stroke:#000000;
        stroke-width:2;
     }
 .leyte
     {  
-       fill: #AF1117;
+       fill: #67000D;
        stroke:#000000;
        stroke-width:2;
     }
 .maguindanao
     {  
-       fill: #FCA689;
+       fill: #E0E0E0;
        stroke:#000000;
        stroke-width:2;
     }
 .marinduque
     {  
-       fill: #FB8D6D;
+       fill: #FB8C6C;
        stroke:#000000;
        stroke-width:2;
     }
 .masbate
     {  
-       fill: #FCB297;
+       fill: #FB8C6C;
        stroke:#000000;
        stroke-width:2;
     }
 .misamis_oriental
     {  
-       fill: #FB6E4E;
+       fill: #FB7E5E;
        stroke:#000000;
        stroke-width:2;
     }
@@ -293,61 +293,61 @@
     }
 .north_cotabato
     {  
-       fill: #FDD3C0;
+       fill: #FCC0A8;
        stroke:#000000;
        stroke-width:2;
     }
 .northern_samar
     {  
-       fill: #F86043;
+       fill: #D31F20;
        stroke:#000000;
        stroke-width:2;
     }
 .nueva_ecija
     {  
-       fill: #FDCFBC;
+       fill: #FDDBCB;
        stroke:#000000;
        stroke-width:2;
     }
 .nueva_vizcaya
     {  
-       fill: #FDD4C2;
+       fill: #FDDDCE;
        stroke:#000000;
        stroke-width:2;
     }
 .occidental_mindoro
     {  
-       fill: #FCAB8E;
+       fill: #FCA487;
        stroke:#000000;
        stroke-width:2;
     }
 .oriental_mindoro
     {  
-       fill: #F75D42;
+       fill: #FA6748;
        stroke:#000000;
        stroke-width:2;
     }
 .palawan
     {  
-       fill: #D62321;
+       fill: #E83429;
        stroke:#000000;
        stroke-width:2;
     }
 .pampanga
     {  
-       fill: #FDD8C8;
+       fill: #FEE3D7;
        stroke:#000000;
        stroke-width:2;
     }
 .pangasinan
     {  
-       fill: #FEE3D6;
+       fill: #FEE5DA;
        stroke:#000000;
        stroke-width:2;
     }
 .quezon
     {  
-       fill: #FEF2EC;
+       fill: #FEF3ED;
        stroke:#000000;
        stroke-width:2;
     }
@@ -359,31 +359,31 @@
     }
 .rizal
     {  
-       fill: #FEF3EE;
+       fill: #FEF4EF;
        stroke:#000000;
        stroke-width:2;
     }
 .romblon
     {  
-       fill: #FB7353;
+       fill: #F34D37;
        stroke:#000000;
        stroke-width:2;
     }
 .samar
     {  
-       fill: #FDDCCD;
+       fill: #FCCCB7;
        stroke:#000000;
        stroke-width:2;
     }
 .sarangani
     {  
-       fill: #FEF4EF;
+       fill: #E0E0E0;
        stroke:#000000;
        stroke-width:2;
     }
 .sorsogon
     {  
-       fill: #FCB99F;
+       fill: #FC9F81;
        stroke:#000000;
        stroke-width:2;
     }
@@ -395,13 +395,13 @@
     }
 .southern_leyte
     {  
-       fill: #FDD8C8;
+       fill: #FCC9B4;
        stroke:#000000;
        stroke-width:2;
     }
 .sultan_kudarat
     {  
-       fill: #FDCEBA;
+       fill: #FCB69C;
        stroke:#000000;
        stroke-width:2;
     }
@@ -413,13 +413,13 @@
     }
 .surigao_del_norte
     {  
-       fill: #FCB297;
+       fill: #FCA284;
        stroke:#000000;
        stroke-width:2;
     }
 .tarlac
     {  
-       fill: #FDDFD1;
+       fill: #FEE5D9;
        stroke:#000000;
        stroke-width:2;
     }
@@ -431,13 +431,13 @@
     }
 .zambales
     {  
-       fill: #FEEBE1;
+       fill: #FEEDE5;
        stroke:#000000;
        stroke-width:2;
     }
 .zamboanga_del_norte
     {  
-       fill: #FCC9B4;
+       fill: #E0E0E0;
        stroke:#000000;
        stroke-width:2;
     }
@@ -449,7 +449,7 @@
     }
 .zamboanga_sibugay
     {  
-       fill: #FEEBE2;
+       fill: #FEE7DC;
        stroke:#000000;
        stroke-width:2;
     }

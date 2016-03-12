@@ -118,11 +118,10 @@ def compute_dK_dW(df):
     #vulnerabilities from total and bias
     #early-warning-adjusted vulnerability
     vp = df["v_p"]*(1-df["pi"]*df["shew"])* (1-df["nat_buyout"])
-    vr= df["v_r"]*(1-df["pi"]*df["shew"])* (1-df["nat_buyout"])
+    vr = df["v_r"]*(1-df["pi"]*df["shew"]) * (1-df["nat_buyout"])
     
     #losses shared within the province
-    v_shew=   df["v_s"]   *(1-df["pi"]*df["shew"])
-    vs_touse = df["v_s"] *(1-df["pi"]*df["shew"]) * (1-df["nat_buyout"])
+    v_shared = df["v_s"] *(1-df["pi"]*df["shew"]) * (1-df["nat_buyout"])
     
     ###########
     #Ex-post support
@@ -137,7 +136,7 @@ def compute_dK_dW(df):
     ############
     #Welfare losses 
     
-    delta_W,dKapparent,dcap,dcar =calc_delta_welfare(ph,fap,far,vp,vr,vs_touse,cp,cr,tot_p,tot_r,mu,gamma,rho,elast)
+    delta_W,dKapparent,dcap,dcar =calc_delta_welfare(ph,fap,far,vp,vr,v_shared,cp,cr,tot_p,tot_r,mu,gamma,rho,elast)
     
     ###########
     #OUTPUT
@@ -241,9 +240,13 @@ def welf(c,elast):
     
 def def_ref_values(df):
     #fills the "ref" variables (those protected when computing derivatives)
+    
     df["protectionref"]=df["protection"]  #avoid numerical errors when computing derivatives with respect to protection
-    df["gdp_pc_pp_ref"] = df["gdp_pc_pp"] #risk expressed as fraction of current icome
-    df["v_s"] = df["v_r"] #vr changes only vulnerabilities in the affected zone. 
+    
+    df["gdp_pc_pp_ref"] = df["gdp_pc_pp"] #risk expressed as fraction of current income
+    
+    df["v_s"] = df["v_r"] 
+    
     return df
 
 
