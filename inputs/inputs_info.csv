@@ -25,7 +25,7 @@ protectionref, Hazard (protection) (ref)
 protection, Hazard (protection)
 pv,Asset-vulnerability bias
 resilience,Socio-economic capacity
-risk,Risk to well-being
+risk,Expected welfare losses
 share1,Relative income of poor families
 shew,Access to early warning
 sigma_p,Effective scale up for poor people
@@ -47,4 +47,4 @@ dKtot,Average asset losses across persons in the event of a disaster
 deltaW_nat,Welfare losses in the other provinces (due to risk sharing) in the event of a disaster
 dWpc_curency,Expected welfare losses per capita due to natural disasters 
 dWtot_currency,Total expected welfare losses due to natural disasters
-risk_to_assets,Total expected assest losses due to natural disasters as a fraction of local GDP
+risk_to_assets,Risk to assets
