@@ -4,28 +4,38 @@ axfin_p,Access to finance for poor people
 axfin_r,Access to finance for non-poor people
 axhealth,Access to health care
 bashs,Births attended by skilled health staff
+dcap,Average consumption losses for poor people in the event of a disaster
+dcar,Average consumption losses for nonpoor people in the event of a disaster
+delta_W,Average welfare losses in the event of a disaster
+deltaW_nat,Welfare losses in the other provinces (due to risk sharing) in the event of a disaster
+dK,Average asset losses per person in the event of a disaster
+dKtot,Average asset losses across persons in the event of a disaster
+dWpc_curency,Expected welfare losses per capita due to natural disasters 
+dWtot_currency,Total expected welfare losses due to natural disasters
 fa,Exposure
 fap,"Exposure, poor people"
 far,"Exposure, non-poor people"
 faref,Reference Exposure
-rel_gdp_pp, Average income of the province
-rho,Discount rate
-gdp_pc_pp_ref, Average income in the province
 gdp_pc_pp, Average income in the province
 gdp_pc_pp_nat,National GDP per capita
+gdp_pc_pp_ref, Average income in the province
 income_elast,Elasticity of utility
+nat_buyout,Risk transferred nationally
+national_pop,National population
 ophe,Out-of-pocket health expenditure
 pi,Avoided losses with early warning
 plgp,Basic education
 pop,Population
-nat_buyout,Risk transferred nationally
 pov_head,Poverty incidence
 pov_head_ref,Poverty headcount
-protectionref, Hazard (protection) (ref)
 protection, Hazard (protection)
-pv,Asset-vulnerability bias
+protectionref, Hazard (protection) (ref)
+rel_gdp_pp, Average income of the province (relative to national)
 resilience,Socio-economic capacity
+rho,Discount rate
 risk,Expected welfare losses
+risk_to_assets,Risk to assets
+scale_up_target,Scale-up target
 share1,Relative income of poor families
 shew,Access to early warning
 sigma_p,Effective scale up for poor people
@@ -36,15 +46,5 @@ T_rebuild_K,Time to reconstruct
 v,Vulnerability without early warning
 v_p,Asset vulnerability (poor people)
 v_r,Asset vulnerability (non-poor people)
-v_s,Asset vulnerability (shared sector)
+v_s,Asset vulnerability (shared losses)
 v_shew,Asset vulnerability
-scale_up_target,Scale-up target
-dK,Average asset losses per person in the event of a disaster
-delta_W,Average welfare losses in the event of a disaster
-dcap,Average consumption losses for poor people in the event of a disaster
-dcar,Average consumption losses for nonpoor people in the event of a disaster
-dKtot,Average asset losses across persons in the event of a disaster
-deltaW_nat,Welfare losses in the other provinces (due to risk sharing) in the event of a disaster
-dWpc_curency,Expected welfare losses per capita due to natural disasters 
-dWtot_currency,Total expected welfare losses due to natural disasters
-risk_to_assets,Risk to assets
