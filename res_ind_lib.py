@@ -79,23 +79,6 @@ def compute_dK_dW(df):
     '''Computes dk and dW line by line.
     presence of multiple return period or multihazard data is transparent to this function'''    
 
-    
-    # # # # # # # # # # # # # # # # # # #
-    # MACRO MULTIPLIER
-    
-    #rebuilding exponentially to 95% of initial stock in reconst_duration
-    three = np.log(1/0.05) 
-    recons_rate = three/ df["T_rebuild_K"]  
-    
-    #discount rate
-    rho = df["rho"]
-    
-    #productivity of capital
-    mu= df["avg_prod_k"]
-
-    # Calculation of macroeconomic resilience
-    gamma =(mu +recons_rate)/(rho+recons_rate)   
-   
     ###############################
     #Description of inequalities
     
@@ -115,16 +98,28 @@ def compute_dK_dW(df):
     far =df["far"]
 
     ###########"
-    #vulnerabilities from total and bias
     #early-warning-adjusted vulnerability
     
-    # print(df.ix[["Maguindanao"],"shew"])
-    
-    vp = df["v_p"]*(1-df["pi"]*df["shew"])* (1-df["nat_buyout"])
-    vr = df["v_r"]*(1-df["pi"]*df["shew"]) * (1-df["nat_buyout"])
+    vp = df["v_p"]*(1-df["pi"]*df["shew"])
+    vr = df["v_r"]*(1-df["pi"]*df["shew"]) 
     
     #losses shared within the province
-    v_shared = df["v_s"] *(1-df["pi"]*df["shew"]) * (1-df["nat_buyout"])
+    v_shared = df["v_s"] *(1-df["pi"]*df["shew"]) 
+    
+    # # # # # # # # # # # # # # # # # # #
+    # From asset losses to consumption losses
+    
+    #time it takes to rebuild the damaged asset
+    N= df["T_rebuild_K"]
+
+    #discount rate
+    rho = df["rho"]
+
+    #productivity of capital
+    mu= df["avg_prod_k"]
+
+    # Link between immediate and discounted losses
+    gamma =(mu +3/N)/(rho+3/N) 
     
     ###########
     #Ex-post support
@@ -139,14 +134,14 @@ def compute_dK_dW(df):
     ############
     #Welfare losses 
     
-    delta_W,dKapparent,dcap,dcar =calc_delta_welfare(ph,fap,far,vp,vr,v_shared,cp,cr,tot_p,tot_r,mu,gamma,rho,elast)
+    delta_W,dK,dcap,dcar =calc_delta_welfare(ph,fap,far,vp,vr,v_shared,cp,cr,tot_p,tot_r,mu,gamma,rho,elast)
     
     ###########
     #OUTPUT
     df_out = pd.DataFrame(index=df.index)
     
     #corrects from avoided losses through national risk sharing
-    df_out["dK"] = dKapparent/(1-df["nat_buyout"])
+    df_out["dK"] = dK
 
     df_out["delta_W"]=delta_W
     df_out["dcap"]=dcap
@@ -169,7 +164,6 @@ def calc_risk_and_resilience_from_k_w(df):
     wprime =(welf(df["gdp_pc_pp_nat"]/rho+h,df["income_elast"])-welf(df["gdp_pc_pp_nat"]/rho-h,df["income_elast"]))/(2*h)
 
     #Risk to welfare
-    df["deltaW_nat"] = wprime * df["dK"]* df["nat_buyout"]* df["pop"]/df["national_pop"]
     df["dWpc_curency"] =  (df["delta_W"]+df["deltaW_nat"])/wprime /df["protection"]
     df["risk"]= df["dWpc_curency"]/(df["gdp_pc_pp_ref"]);
     df["dWtot_currency"]=df["dWpc_curency"]*df["pop"];
