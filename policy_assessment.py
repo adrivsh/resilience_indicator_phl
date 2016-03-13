@@ -4,8 +4,10 @@ import matplotlib.pyplot as plt
 
 from subprocess import Popen  #to call other programs from python
 import sys #one function, flush, to force jupyter to print a message immediately
-import glob  #to make folders, move files, etc.
+import glob  #to make foldeltas, move files, etc.
 
+import pandas as pd
+from res_ind_lib import *
 
 #height of the bars
 height = 0.40  
@@ -17,30 +19,81 @@ tinyfont= {'family' : 'sans serif','size'   : 8}
 
 #instructs matplotlib to use that font by default
 plt.rc('font', **font)
+    
+def compute_policies(df_original,pol_increment,pol_assess_set, bounds, **kwargs):
+    
+    #initialize
+    delta = pd.DataFrame(index=df_original.index, columns=pd.MultiIndex.from_product([pol_increment.index,pol_assess_set], names=['inputs', 'outputs']))
+    
+    #baseline
+    fx = compute_resiliences(df_original, **kwargs)[pol_assess_set]
+    
+    for var in pol_increment.index:
+        progress_reporter(var)
+    
+        df_=df_original.copy(deep=True)
+        
+        #increments
+        df_[var]=df_[var]+pol_increment[var]
+        
+        #new value
+        fxh= compute_resiliences(df_, **kwargs)[pol_assess_set]
+        
+        #effect
+        delta[var] = (fxh-fx)
+    
+    progress_reporter("done.")       
+    
+    return delta.stack("inputs").unstack("province").swaplevel('province', 'outputs', axis=1).sort_index(axis=1).dropna(how="all",axis=1)
+    
 
-def render_pol_cards(ders,colors,policy_descriptions,unit,size,province_list=None):
-    """Renders the policy cards
-    ders: dataframe indexed by (var). Column is multi-indexed: provinces x ["dWtot_currency","dKtot"]. The impact of marginally increasing var in province on dw and dK.
+def compute_policies_mh(df_original,multi_hard_info,pol_increment_mh,pol_assess_set, bounds, **kwargs):
+    
+    #initialize
+    delta = pd.DataFrame(index=df_original.index, columns=pd.MultiIndex.from_product([pol_increment_mh.index,pol_assess_set], names=['inputs', 'outputs']))
+    
+    #baseline
+    fx = compute_resiliences(df_original, multihazard_data =multi_hard_info)[pol_assess_set]
+        
+    for var in pol_increment_mh.index:
+        progress_reporter(var)
+
+        mh_=multi_hard_info.copy(deep=True).unstack("hazard")
+
+        #increments
+        mh_[eval(var)]=mh_[eval(var)]+pol_increment_mh[var]
+
+        #new value
+        fxh= compute_resiliences(df_original, multihazard_data =mh_.stack("hazard"))[pol_assess_set]
+
+        #effect
+        delta[var] = (fxh-fx)
+    
+    progress_reporter("done.")       
+    
+    return delta.stack("inputs").unstack("province").swaplevel('province', 'outputs', axis=1).sort_index(axis=1).dropna(how="all",axis=1)
+        
+def render_pol_cards(deltas,colors,policy_descriptions,pol_increment,unit,province_list, 
+outfolder="cards/"):
+    """Rendeltas the policy cards
+    deltas: dataframe indexed by (var). Column is multi-indexed: provinces x ["dWtot_currency","dKtot"]. The impact of marginally increasing var in province on dw and dK.
     policy_descriptions. Series index by variable. Explains what the policy is. eg "Decrease poverty to 0.1%" 
     colors: dataframe. Columns: ["dWtot_currency","dKtot"]. Rows: kwargs to pass to plt.barh for formatting the color bars.
     unit: dictionary such as {"multiplier":1000, "string" Thousands }. For the x label.
-    province_list: provinces to plot. Should be in ders.index.
-    size: Size of the policy experiment. To be multiplied by ders.
+    province_list: provinces to plot. Should be in deltas.index.
     """
     
-    #By default, plots all provinces in ders.
-    if province_list is None:
-        province_list=ders.unstack("var").index
-    
+   
     for p in province_list:
         #Displays current province in the loop 
         progress_reporter(p)    
         
-        #select current line in ders, and scales it.
-        toplot = unit["multiplier"]*(ders[p].mul(size,axis=0)).dropna()  
+        #select current line in deltas, and scales it.
+        toplot = unit["multiplier"]*deltas[p].dropna()  
         
         #assumes the policy is framed in terms of what increases welfare ("decrease poverty", not "increase poverty")
-        toplot = toplot.mul(-np.sign(toplot.dWtot_currency),axis=0)
+        pol_sign  = -np.sign(toplot.dWtot_currency)
+        toplot = toplot.mul(pol_sign,axis=0)
         toplot = toplot[["dWtot_currency","dKtot"]].sort_values("dWtot_currency",ascending=False)       
         #number of policy experiments to render
         n=toplot.shape[0]
@@ -57,6 +110,10 @@ def render_pol_cards(ders,colors,policy_descriptions,unit,size,province_list=Non
 
         #0 line
         plt.vlines(0, 0, n, colors="black")    
+        
+        for k in deltas.index:
+            policy_descriptions[k] = policy_descriptions[k].format(sign=("-" if pol_sign[k]<0 else "+"),dh=pol_increment[k])
+        
         
         # add some labels, title and axes ticks
         ax.set_xlabel(unit["string"])
@@ -95,9 +152,9 @@ def render_pol_cards(ders,colors,policy_descriptions,unit,size,province_list=Non
                                         ), **smallfont)
 
         
-        glob.os.makedirs("cards",exist_ok=True)
+        glob.os.makedirs(outfolder,exist_ok=True)
         #exports to pdf
-        plt.savefig("cards/"+file_name_formater(p)+".pdf",
+        plt.savefig(outfolder+file_name_formater(p)+".pdf",
                     bbox_inches="tight" #ensures the policy label are not cropped out
                     )
             
@@ -131,6 +188,9 @@ def autolabel(ax,rects,color, sigdigits,  **kwargs):
         if stri.endswith("."):
             stri=stri[:-1]        
         
+        if stri=="-0":
+            stri="0"
+        
         #space before or after (pad)
         if value<0:
             stri = stri+' '
@@ -140,7 +200,33 @@ def autolabel(ax,rects,color, sigdigits,  **kwargs):
         #actual print    
         ax.text(value, y+0.4*h, stri, ha="right" if x<0 else 'left', va='center', color=color , **kwargs)
 
-        
+def check_bounds(df, bounds):
+    clip = df.clip(lower=bounds.inf.dropna(),upper=bounds.sup.dropna(),axis=1).fillna(df)
+    
+    was_diff=(clip!=df) & (df.notnull())
+    
+    for c in was_diff.columns[was_diff.any()]:
+        print("clipped "+c+" in "+"; ".join(was_diff[c][was_diff[c]].index))
+    
+    return clip
+    
+def check_bounds_series(s, bounds):
+
+    clip=s
+
+    if not np.isnan(bounds.inf):
+        clip = clip.clip_lower(bounds.inf)
+    if not np.isnan(bounds.sup):
+        clip = clip.clip_upper(bounds.sup)
+    
+    was_diff=(clip!=s) & (s.notnull())
+    
+    if was_diff.any():
+        print("clipped "+"; ".join(was_diff[was_diff].index))
+    
+    return clip
+    
+ 
 def file_name_formater(string):
     """Ensures string does not contain special characters so it can be used as a file name"""    
     return string.lower().replace(" ","_").replace("\\","")
@@ -154,7 +240,7 @@ def merge_cardfiles(list,outputname):
     command= ""
     i=1
     for name in list:
-        command+="({name}) run [ /Page {page} /Title ({simplename}) /OUT pdfmark \n".format(name=name.replace("\\","/"),simplename=glob.os.path.splitext(glob.os.path.basename(name))[0].title(),page=i)
+        command+="({name}) run [ /Page {page} /Title ({simplename}) /OUT pdfmark \n".format(name=name.replace("\\","/"),simplename=glob.os.path.splitext(glob.os.path.basename(name))[0].replace("_"," ").title(),page=i)
         i+=1
 
     #writes the command for ghostscipt

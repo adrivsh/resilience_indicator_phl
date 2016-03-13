@@ -117,6 +117,9 @@ def compute_dK_dW(df):
     ###########"
     #vulnerabilities from total and bias
     #early-warning-adjusted vulnerability
+    
+    # print(df.ix[["Maguindanao"],"shew"])
+    
     vp = df["v_p"]*(1-df["pi"]*df["shew"])* (1-df["nat_buyout"])
     vr = df["v_r"]*(1-df["pi"]*df["shew"]) * (1-df["nat_buyout"])
     
@@ -166,7 +169,7 @@ def calc_risk_and_resilience_from_k_w(df):
     wprime =(welf(df["gdp_pc_pp_nat"]/rho+h,df["income_elast"])-welf(df["gdp_pc_pp_nat"]/rho-h,df["income_elast"]))/(2*h)
 
     #Risk to welfare
-    df["deltaW_nat"] = wprime * df["dK"]* df["nat_buyout"]* df["pop"]/df["pop"].sum()
+    df["deltaW_nat"] = wprime * df["dK"]* df["nat_buyout"]* df["pop"]/df["national_pop"]
     df["dWpc_curency"] =  (df["delta_W"]+df["deltaW_nat"])/wprime /df["protection"]
     df["risk"]= df["dWpc_curency"]/(df["gdp_pc_pp_ref"]);
     df["dWtot_currency"]=df["dWpc_curency"]*df["pop"];
