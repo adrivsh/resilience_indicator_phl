@@ -1,0 +1,5 @@
+key,descriptor,increment
+"('fap', 'coast')",Exposure of poor households to coastal floods ({sign}{dh:.0%}),0.01
+"('fap', 'river')",Exposure of poor households to river floods ({sign}{dh:.0%}),0.01
+"('far', 'coast')",Exposure of nonpoor households to coastal floods ({sign}{dh:.0%}),0.01
+"('far', 'river')",Exposure of nonpoor households to river floods ({sign}{dh:.0%}),0.01

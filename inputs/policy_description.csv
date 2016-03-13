@@ -1,20 +1,16 @@
-key,descriptor,concerns,concerns,increment
-fap,Exposure of poor households (-{dh:.0%}),p,p,0.01
-far,Exposure of nonpoor households (-{dh:.0%}),r,r,0.01
-rel_gdp_pp,Average income in the province (+{dh:.0%}),all,all,0.01
-rho,Discount rate,all,all,0.01
-income_elast,Elasticity of utility,all,all,0.01
-pi,Reactivity to early-warnings (+{dh:.0%}),all,all,0.01
-plgp,Basic education,all,all,0.01
-nat_buyout,Share of risk transferred nationally (+{dh:.0%}),all,all,0.01
-pov_head,Poverty incidence (-{dh:.0%}),all,all,0.01
-protection,Protection (+{dh:.0f} yr),all,all,1
-share1,Income of poor families (+{dh:.0%}),all,all,0.01
-shew,Access to early warning (+{dh:.0%}),all,all,0.01
-sigma_p,Scale-up of social protection for poor households (+{dh:.0%}),p,p,0.01
-sigma_r,Scale-up of social protection for nonpoor households (+{dh:.0%}),r,r,0.01
-social_p,Social protection for poor households (+{dh:.0%}),p,p,0.01
-social_r,Social protection for nonpoor households (+{dh:.0%}),r,r,0.01
-T_rebuild_K,Time to reconstruct (-{dh:.0f} yr),all,all,1
-v_p,Asset vulnerability for poor households (+{dh:.0%}),p,p,0.01
-v_r,Asset vulnerability for nonpoor households (+{dh:.0%}),r,r,0.01
+key,descriptor,increment
+fap,Exposure of poor households ({sign}{dh:.0%}),0.01
+far,Exposure of nonpoor households ({sign}{dh:.0%}),0.01
+rel_gdp_pp,Average income in the province ({sign}{dh:.0%}),0.01
+pi,Reactivity to early{sign}warnings ({sign}{dh:.0%}),0.05
+pov_head,Poverty incidence ({sign}{dh:.0%}),0.01
+protection,Protection ({sign}{dh:.0f} yr),1
+share1,Income of poor families ({sign}{dh:.0%}),0.01
+shew,Access to early warning ({sign}{dh:.0%}),0.1
+sigma_p,Scale-up of social protection for poor households ({sign}{dh:.0%}),.15
+sigma_r,Scale-up of social protection for nonpoor households ({sign}{dh:.0%}),0.15
+social_p,Social protection for poor households ({sign}{dh:.0%}),0.05
+social_r,Social protection for nonpoor households ({sign}{dh:.0%}),0.05
+T_rebuild_K,Time to reconstruct ({sign}{dh:.0f} yr),1
+v_p,Asset vulnerability for poor households ({sign}{dh:.0%}),0.05
+v_r,Asset vulnerability for nonpoor households ({sign}{dh:.0%}),0.05

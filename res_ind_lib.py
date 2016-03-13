@@ -117,6 +117,9 @@ def compute_dK_dW(df):
     ###########"
     #vulnerabilities from total and bias
     #early-warning-adjusted vulnerability
+    
+    # print(df.ix[["Maguindanao"],"shew"])
+    
     vp = df["v_p"]*(1-df["pi"]*df["shew"])* (1-df["nat_buyout"])
     vr = df["v_r"]*(1-df["pi"]*df["shew"]) * (1-df["nat_buyout"])
     
