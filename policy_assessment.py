@@ -73,12 +73,8 @@ def compute_policies_mh(df_original,multi_hard_info,pol_increment_mh,pol_assess_
     
     return delta.stack("inputs").unstack("province").swaplevel('province', 'outputs', axis=1).sort_index(axis=1).dropna(how="all",axis=1)
         
-    
-    
-    
-    
-
-def render_pol_cards(deltas,colors,policy_descriptions,pol_increment,unit,province_list=None):
+def render_pol_cards(deltas,colors,policy_descriptions,pol_increment,unit,province_list, 
+outfolder="cards/"):
     """Rendeltas the policy cards
     deltas: dataframe indexed by (var). Column is multi-indexed: provinces x ["dWtot_currency","dKtot"]. The impact of marginally increasing var in province on dw and dK.
     policy_descriptions. Series index by variable. Explains what the policy is. eg "Decrease poverty to 0.1%" 
@@ -87,10 +83,7 @@ def render_pol_cards(deltas,colors,policy_descriptions,pol_increment,unit,provin
     province_list: provinces to plot. Should be in deltas.index.
     """
     
-    #By default, plots all provinces in deltas.
-    if province_list is None:
-        province_list=deltas.unstack("var").index
-    
+   
     for p in province_list:
         #Displays current province in the loop 
         progress_reporter(p)    
@@ -159,9 +152,9 @@ def render_pol_cards(deltas,colors,policy_descriptions,pol_increment,unit,provin
                                         ), **smallfont)
 
         
-        glob.os.makedirs("cards",exist_ok=True)
+        glob.os.makedirs(outfolder,exist_ok=True)
         #exports to pdf
-        plt.savefig("cards/"+file_name_formater(p)+".pdf",
+        plt.savefig(outfolder+file_name_formater(p)+".pdf",
                     bbox_inches="tight" #ensures the policy label are not cropped out
                     )
             
@@ -247,7 +240,7 @@ def merge_cardfiles(list,outputname):
     command= ""
     i=1
     for name in list:
-        command+="({name}) run [ /Page {page} /Title ({simplename}) /OUT pdfmark \n".format(name=name.replace("\\","/"),simplename=glob.os.path.splitext(glob.os.path.basename(name))[0].title(),page=i)
+        command+="({name}) run [ /Page {page} /Title ({simplename}) /OUT pdfmark \n".format(name=name.replace("\\","/"),simplename=glob.os.path.splitext(glob.os.path.basename(name))[0].replace("_"," ").title(),page=i)
         i+=1
 
     #writes the command for ghostscipt
