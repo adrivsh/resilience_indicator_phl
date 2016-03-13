@@ -164,7 +164,7 @@ def calc_risk_and_resilience_from_k_w(df):
     wprime =(welf(df["gdp_pc_pp_nat"]/rho+h,df["income_elast"])-welf(df["gdp_pc_pp_nat"]/rho-h,df["income_elast"]))/(2*h)
 
     #Risk to welfare
-    df["dWpc_curency"] =  (df["delta_W"]+df["deltaW_nat"])/wprime /df["protection"]
+    df["dWpc_curency"] =  (df["delta_W"])/wprime /df["protection"]
     df["risk"]= df["dWpc_curency"]/(df["gdp_pc_pp_ref"]);
     df["dWtot_currency"]=df["dWpc_curency"]*df["pop"];
     
@@ -174,7 +174,7 @@ def calc_risk_and_resilience_from_k_w(df):
     #reference losses
     dWref   = wprime*df["dK"]
     
-    df["resilience"]                    =dWref/(df["delta_W"] + df["deltaW_nat"]);
+    df["resilience"]                    =dWref/(df["delta_W"] );
 
     ############
     #RISK TO ASSETS
