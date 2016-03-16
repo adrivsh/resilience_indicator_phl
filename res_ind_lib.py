@@ -6,14 +6,31 @@ def compute_resiliences(df_in, fa_ratios=None, multihazard_data =None):
 
     df=df_in.copy()
     
+    #blends multihazard data
+    dfh = broadcast_hazard(multihazard_data, df)
+   
+    #interpolate fa rations and blends far ratios data
+    fa_ratios = interpolate_faratios(fa_ratios, df_in.protection.unique().tolist())
+    dfhr = broadcast_return_periods(fa_ratios, dfh)
+   
     #computes dk_{hazard, return} and dW_{hazard, return}
-    dkdw=compute_dK_dW(df)
-    df[dkdw.columns]=dkdw     #adds dk and dw-like columns to df
+    dkdwhr=compute_dK_dW(dfhr)
+    
+    #dk_{hazard} and dW_{hazard}
+    dkdwh = average_over_rp(dkdwhr,dfhr["protectionref"])
+    
+    #Sums over hazard dk, dW
+    dkdw = sum_over_hazard(dkdwh)
 
+    #adds dk and dw-like columns to df
+    df[dkdw.columns]=dkdw
+    
     #computes socio economic capacity and risk
     df = calc_risk_and_resilience_from_k_w(df)
 
     return df
+
+    
     
 def compute_dK_dW(df):  
     '''Computes dk and dW line by line. 
@@ -193,6 +210,129 @@ def def_ref_values(df):
     #fills the "ref" variables (those protected when computing derivatives)
     
     df["v_s"] = df["v_r"]* (1-df["pi"]*df["shewr"])
+    df["protectionref"] = df["protection"]
     
     return df
 
+    
+def broadcast_hazard(hazard_info, df_in):    
+    if hazard_info is None:
+        return df_in
+    
+    hazard_info=hazard_info.reset_index()
+    
+    hazard_list = hazard_info.hazard.unique()
+    
+    nb_hazards =len(hazard_list)
+    df = pd.concat(
+        [df_in]*nb_hazards,
+        axis=1, keys=hazard_list, names=["hazard","var"]
+        ).stack("hazard").sort_index().sortlevel()#.reset_index("hazard")
+    
+    # copies multi hazard info in the casted dataframe
+    mh = hazard_info.set_index(["province","hazard"])
+    df[mh.columns]=mh
+    
+    return df.dropna()
+    
+    
+def broadcast_return_periods(fa_ratios, df_in):    
+    #builds a dataframe "multi-indexed" by return period  ((province,rp), var)
+    
+    if fa_ratios is None:
+        return df_in
+    
+    nrps =len(fa_ratios.columns)
+    df = pd.concat(
+        [df_in.copy(deep=True)]*nrps,
+        axis=1, keys=fa_ratios.columns, names=["rp","var"]
+        ).swaplevel("var","rp",axis=1).sortlevel(0,axis=1).stack("rp")#Reshapes into ((province,rp), vars) 
+    
+    #introduces different exposures for different return periods
+    df["fap"]=df["fap"]*fa_ratios.stack("rp")
+    df["far"]=df["far"]*fa_ratios.stack("rp")
+    
+    
+    # df=df#.reset_index("rp")#.set_index(["province","rp"])
+    
+    return df.dropna()
+    
+
+from scipy.interpolate import interp1d
+def interpolate_faratios(fa_ratios,protection_list):
+    if fa_ratios is None:
+        return None
+ 
+    #figures out all the return periods to be included
+    all_rps = list(set(protection_list+fa_ratios.columns.tolist()))
+
+    fa_ratios_rps = fa_ratios.copy()
+    
+    #extrapolates linear towards the 0 return period exposure  (this creates negative exposure that is tackled after interp) (mind the 0 rp when computing probas)
+    fa_ratios_rps[0]=fa_ratios_rps.iloc[:,0]- fa_ratios_rps.columns[0]*(
+        fa_ratios_rps.iloc[:,1]-fa_ratios_rps.iloc[:,0])/(
+        fa_ratios_rps.columns[1]-fa_ratios_rps.columns[0])
+    
+    
+    #add new, interpolated values for fa_ratios, assuming constant exposure on the right
+    x = fa_ratios_rps.columns.values
+    y = fa_ratios_rps.values
+    fa_ratios_rps= pd.concat(
+        [pd.DataFrame(interp1d(x,y,bounds_error=False)(all_rps),index=fa_ratios_rps.index, columns=all_rps)]
+        ,axis=1).sort_index(axis=1).clip(lower=0).fillna(method="pad",axis=1)
+    fa_ratios_rps.columns.name="rp"
+
+    return fa_ratios_rps
+        
+def average_over_rp(df,protection):        
+    ###AGGREGATION OF THE OUTPUTS OVER RETURN PERIODS
+    
+    #does nothing if df does not contain data on return periods
+    try:
+        if "rp" not in df.index.names:
+            return df
+    except(TypeError):
+        pass
+    
+    df=df.copy().reset_index("rp")
+    protection=protection.copy().reset_index("rp",drop=True)
+    
+    #computes probability of each return period
+    return_periods=np.unique(df["rp"].dropna())
+
+    proba = pd.Series(np.diff(np.append(1/return_periods,0)[::-1])[::-1],index=return_periods) #removes 0 from the rps
+
+    #matches return periods and their probability
+    proba_serie=df["rp"].replace(proba)
+
+    #removes events below the protection level
+    proba_serie[protection>df.rp] =0
+
+    #handles cases with multi index and single index (works around pandas limitation)
+    idxlevels = list(range(df.index.nlevels))
+    if idxlevels==[0]:
+        idxlevels =0
+        
+    #average weighted by proba
+    averaged = df.mul(proba_serie,axis=0).sum(level=idxlevels).div(proba_serie.sum(level=idxlevels),axis=0)
+    
+    return averaged.drop("rp",axis=1)
+
+
+def sum_over_hazard(df):  
+    #does nothing if df does not contain data on multiple hazards 
+    try:
+        if "hazard" not in df.index.names:
+            return df
+    except(TypeError):
+        pass
+    
+    df=df.reset_index("hazard")
+    
+    #handles cases with multi index and single index (works around pandas limitation)
+    idxlevels = list(range(df.index.nlevels))
+    if idxlevels==[0]:
+        idxlevels =0
+    
+    return df.sum(level=idxlevels)
+        
