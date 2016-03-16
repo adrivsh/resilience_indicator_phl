@@ -1,35 +1,24 @@
 key,descriptor,inf,sup
 avg_prod_k,Productivity of capital,0,10
-axfin_p,Access to finance for poor people,0,1
-axfin_r,Access to finance for non-poor people,0,1
-axhealth,Access to health care,0,1
-bashs,Births attended by skilled health staff,0,1
 dcap,Average consumption losses for poor people in the event of a disaster,0,
 dcar,Average consumption losses for nonpoor people in the event of a disaster,0,
 delta_W,Average welfare losses in the event of a disaster,0,
-deltaW_nat,Welfare losses in the other provinces (due to risk sharing) in the event of a disaster,0,
 dK,Average asset losses per person in the event of a disaster,0,
 dKtot,Average asset losses across persons in the event of a disaster,0,
 dWpc_curency,Expected welfare losses per capita due to natural disasters ,0,
 dWtot_currency,Total expected welfare losses due to natural disasters,0,
-fa,Exposure,0,1
 fap,"Exposure, poor people",0,1
 far,"Exposure, non-poor people",0,1
-faref,Reference Exposure,0,1
+cp, Average income of poor families,0,
+cr, Average income of non poor families,0,
 gdp_pc_pp, Average income in the province,0,
 gdp_pc_pp_nat,National GDP per capita,0,
 gdp_pc_pp_ref, Average income in the province,0,
 income_elast,Elasticity of utility,0,10
-nat_buyout,Risk transferred nationally,0,1
-national_pop,National population,0,
-ophe,Out-of-pocket health expenditure,0,1
 pi,Avoided losses with early warning,0,1
-plgp,Basic education,0,1
 pop,Population,0,
 pov_head,Poverty incidence,0,1
-pov_head_ref,Poverty headcount,0,1
 protection, Hazard (protection),0,
-protectionref, Hazard (protection) (ref),0,
 rel_gdp_pp, Average income of the province (relative to national),0,10
 resilience,Socio-economic capacity,0,
 rho,Discount rate,0,1
