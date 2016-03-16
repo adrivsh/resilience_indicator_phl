@@ -26,7 +26,8 @@ risk,Expected welfare losses,0,
 risk_to_assets,Risk to assets,0,
 scale_up_target,Scale-up target,0,1
 share1,Relative income of poor families,0,1
-shew,Access to early warning,0,1.5
+shewp,Access to early warning for poor people,0,1.5
+shewr,Access to early warning for nonpoor people,0,1.5
 sigma_p,Effective scale up for poor people,0,1
 sigma_r,Effective scale up for non-poor people,0,1
 social_p,Social protection for poor people,0,1

@@ -43,7 +43,7 @@ def compute_dK_dW(df):
     vr = df["v_r"]*(1-df["pi"]*df["shewr"]) 
     
     #losses shared within the province
-    v_shared = df["v_s"] *(1-df["pi"]*df["shew"]) 
+    v_shared = df["v_s"]  
     
     # # # # # # # # # # # # # # # # # # #
     # From asset losses to consumption losses
@@ -101,20 +101,15 @@ def calc_risk_and_resilience_from_k_w(df):
     rho = df["rho"]
     h=1e-4
     
-    #welfare of the average Filipino family
-    W_pre_ref = welf(df["gdp_pc_pp_nat"], df["income_elast"])
+    #Reference losses
+    h=1e-4
     
-    #after welfare losses in each province
-    W_post_ref = W_pre_ref - df["delta_W"]
+    wprime =(welf(df["gdp_pc_pp_nat"]/rho+h,df["income_elast"])-welf(df["gdp_pc_pp_nat"]/rho-h,df["income_elast"]))/(2*h)
     
-    #equivalent income 
-    C_post_ref  = invert_welf(W_post_ref,df["income_elast"])
-    
-    #equivalent income loss in the event of a disaster
-    dc_ref = df["gdp_pc_pp_nat"] - C_post_ref
+    dWref   = wprime*df["dK"]
     
     #expected welfare loss (per family and total)
-    df["dWpc_curency"] = dc_ref/df["protection"]
+    df["dWpc_curency"] = df["delta_W"]/wprime/df["protection"]
     df["dWtot_currency"]=df["dWpc_curency"]*df["pop"];
     
     #Risk to welfare as percentage of local GDP
@@ -122,8 +117,7 @@ def calc_risk_and_resilience_from_k_w(df):
     
     ############
     #SOCIO-ECONOMIC CAPACITY)
-    
-    df["resilience"] =df["dWpc_curency"]/df["dK"];
+    df["resilience"] =dWref/(df["delta_W"] );
 
     ############
     #RISK TO ASSETS
@@ -145,7 +139,7 @@ def calc_delta_welfare(ph,fap,far,vp,vr,v_shared,cp,cr,la_p,la_r,mu,gamma,rho,el
     kp = cp/mu
     kr = cr/mu
     
-    #total capital losses
+    #total capital losses per family
     dK = kp*vp*nap+\
          kr*vr*nar
     
@@ -188,8 +182,9 @@ def invert_welf(u,elast):
     """ Invert function of the welfare function """
     
     c=((1-elast)*u+1)**(1/(1-elast))
-    
-    c[elast==1]=np.exp(cond)
+
+    cond = elast==1
+    c[cond]=np.exp(c[cond])
     
     return c
     
@@ -197,7 +192,7 @@ def invert_welf(u,elast):
 def def_ref_values(df):
     #fills the "ref" variables (those protected when computing derivatives)
     
-    df["v_s"] = df["v_r"] 
+    df["v_s"] = df["v_r"]* (1-df["pi"]*df["shewr"])
     
     return df
 
