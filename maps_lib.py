@@ -21,7 +21,7 @@ def make_map_from_svg(series_in, svg_file_path, outname, color_maper=plt.cm.get_
     """
     
     #simplifies the index to lower case without space
-    series_in.index = series_in.index.str.lower().str.replace(" ","_").replace("-","_")
+    series_in.index = series_in.index.str.lower().str.replace(" ","_").str.replace("-","_").str.replace(".","_").str.replace("(","_").str.replace(")","_")
     
     #compute the colors 
     color = data_to_rgb(series_in,color_maper=color_maper)
@@ -58,7 +58,7 @@ def make_map_from_svg(series_in, svg_file_path, outname, color_maper=plt.cm.get_
 
     #names of regions to lower case without space   
     for p in soup.findAll("path"):
-        p["class"]=p["class"].lower().replace(" ","_").replace("-","_")
+        p["class"]=p["class"].lower().replace(" ","_").replace("-","_").replace(".","_").replace("(","_").replace(")","_")
         #Update the title (tooltip) of each region with the numerical value (ignores missing values)
         try:
             p.title.string += "{val:.3%}".format(val=series_in[p["class"]])
