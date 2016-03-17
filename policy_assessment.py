@@ -83,7 +83,9 @@ outfolder="cards/"):
     province_list: provinces to plot. Should be in deltas.index.
     """
     
-   
+    print("HELOOO")
+
+
     for p in province_list:
         #Displays current province in the loop 
         progress_reporter(p)    
