@@ -68,6 +68,7 @@ def compute_policies_mh(df_original,multi_hard_info,pol_increment_mh,pol_assess_
 
         #effect
         delta[var] = (fxh-fx)
+ 
     
     progress_reporter("done.")       
     
@@ -83,9 +84,8 @@ outfolder="cards/"):
     province_list: provinces to plot. Should be in deltas.index.
     """
     
-    print("HELOOO")
-
-
+    # print("HELLOOOOO")
+   
     for p in province_list:
         #Displays current province in the loop 
         progress_reporter(p)    
@@ -97,6 +97,7 @@ outfolder="cards/"):
         pol_sign  = -np.sign(toplot.dWtot_currency)
         toplot = toplot.mul(pol_sign,axis=0)
         toplot = toplot[["dWtot_currency","dKtot"]].sort_values("dWtot_currency",ascending=False)       
+        
         #number of policy experiments to render
         n=toplot.shape[0]
         
@@ -105,6 +106,7 @@ outfolder="cards/"):
     
         #actual plotting
         ind=np.arange(n)
+        
         rects1 = ax.barh(ind,toplot["dKtot"],height=height, **colors.ix["dKtot"]
                )
         rects2 = ax.barh(ind+height,  toplot["dWtot_currency"],height=height, **colors.ix["dWtot_currency"]
@@ -157,6 +159,93 @@ outfolder="cards/"):
         glob.os.makedirs(outfolder,exist_ok=True)
         #exports to pdf
         plt.savefig(outfolder+file_name_formater(p)+".pdf",
+                    bbox_inches="tight" #ensures the policy label are not cropped out
+                    )
+
+def render_pol_cards_per_policy(deltas,colors,policy_descriptions,pol_increment,unit,policy_list, 
+outfolder="cards/"):
+    """Rendeltas the policy cards
+    deltas: dataframe indexed by (var). Column is multi-indexed: provinces x ["dWtot_currency","dKtot"]. The impact of marginally increasing var in province on dw and dK.
+    policy_descriptions. Series index by variable. Explains what the policy is. eg "Decrease poverty to 0.1%" 
+    colors: dataframe. Columns: ["dWtot_currency","dKtot"]. Rows: kwargs to pass to plt.barh for formatting the color bars.
+    unit: dictionary such as {"multiplier":1000, "string" Thousands }. For the x label.
+    policy_list: provinces to plot. Should be in deltas.index.
+    """
+    
+    # print("HELLOOOOO")
+   
+    for pol in policy_list:
+        #Displays current province in the loop 
+        progress_reporter(pol)    
+        
+        #select current line in deltas, and scales it.
+        toplot = unit["multiplier"]*deltas[pol].dropna()  
+        
+        #assumes the policy is framed in terms of what increases welfare ("decrease poverty", not "increase poverty")
+        pol_sign  = -np.sign(toplot.iloc[0].dWtot_currency)
+        toplot = toplot.mul(pol_sign,axis=0)
+        toplot = toplot[["dWtot_currency","dKtot"]].sort_values("dWtot_currency",ascending=False)       
+        
+        #number of PROVINCES experiments to render
+        n=toplot.shape[0]
+        
+        #new figure
+        fig, ax = plt.subplots(figsize=(3.5,n/2.1))
+    
+        #actual plotting
+        ind=np.arange(n)
+        rects1 = ax.barh(ind,toplot["dKtot"],height=height, **colors.ix["dKtot"]
+               )
+        rects2 = ax.barh(ind+height,  toplot["dWtot_currency"],height=height, **colors.ix["dWtot_currency"]
+                )
+                
+        ax.legend(["Effect on asset losses", "Effect on welfare losses"],loc="best")
+
+        #0 line
+        plt.vlines(0, 0, n, colors="black")    
+        
+        the_policy_description = policy_descriptions[pol].format(sign=("-" if pol_sign<0 else "+"),dh=pol_increment[pol])
+        
+        # add some labels, title and axes ticks
+        ax.set_xlabel(unit["string"])
+        ax.set_yticks(ind+height)
+        ax.set_yticklabels(toplot.index+"     "  )
+        plt.title(policy_descriptions[pol]);
+
+        # remove spines
+        # ax.spines['bottom'].set_color('none')
+        ax.spines['right'].set_color('none')
+
+        ax.spines['top'].set_color('none')
+        ax.spines['left'].set_color("none")
+
+        #removes ticks 
+        for tic in ax.xaxis.get_major_ticks() + ax.yaxis.get_major_ticks():
+            tic.tick1On = tic.tick2On = False
+        
+        ax.xaxis.set_ticklabels([])
+
+        #labels (numbers) on the bars
+        autolabel(ax,rects1,colors.ix["dKtot","edgecolor"],2,**tinyfont)
+        autolabel(ax,rects2,colors.ix["dWtot_currency","edgecolor"],2,**smallfont)
+
+        #annotated "legend"
+        # ax.annotate("Effect on asset losses",  xy=(0,n-1+height/2),xycoords='data',ha="left",va="center",
+                      # xytext=(20, -5), textcoords='offset points', 
+                        # arrowprops=dict(arrowstyle="->",
+                                        # connectionstyle="arc3,rad=-0.13",color=colors.edgecolor.dKtot
+                                        # ), **smallfont)
+
+        # ax.annotate("Effect on welfare losses",  xy=(0,n-height),xycoords='data',ha="left",va="center",
+                      # xytext=(20, 3), textcoords='offset points', 
+                        # arrowprops=dict(arrowstyle="->",
+                                        # connectionstyle="arc3,rad=+0.13",color=colors.edgecolor.dWtot_currency
+                                        # ), **smallfont)
+
+
+        glob.os.makedirs(outfolder,exist_ok=True)
+        #exports to pdf
+        plt.savefig(outfolder+file_name_formater(pol)+".pdf",
                     bbox_inches="tight" #ensures the policy label are not cropped out
                     )
             

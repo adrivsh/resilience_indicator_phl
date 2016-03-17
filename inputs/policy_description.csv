@@ -1,5 +1,5 @@
 key,descriptor,increment
-fap,Exposure of poor households ({sign}{dh:.0%}),0.01
+fap,Exposure of poor households ({sign}{dh:.0%}),0.1
 far,Exposure of nonpoor households ({sign}{dh:.0%}),0.01
 gdp_pc_pp,Average income in the province ({sign}{dh:.0%}),0.01
 cp,Average income of poor families ({sign}{dh:.0%}),0.01
