@@ -173,7 +173,7 @@ def n_to_one_normalizer(s,n=0):
     return n+(1-n)*y
     
 def bins_normalizer(x,n=7):
-  #bins the data in n regular bins (no clue how this is better than pd.bin)     
+  #bins the data in n regular bins ( is better than pd.bin ? )     
     n=n-1
     y= n_to_one_normalizer(x,0)  #0 to 1 numbe
     return np.floor(n*y)/n
