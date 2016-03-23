@@ -65,7 +65,7 @@
     }
 .bataan
     {  
-       fill: #F7FBCD;
+       fill: #F5FAB1;
        stroke:#000000;
        stroke-width:2;
     }
@@ -77,13 +77,13 @@
     }
 .batangas
     {  
-       fill: #FDC678;
+       fill: #FDC675;
        stroke:#000000;
        stroke-width:2;
     }
 .benguet
     {  
-       fill: #9CCDE2;
+       fill: #95D168;
        stroke:#000000;
        stroke-width:2;
     }
@@ -107,7 +107,7 @@
     }
 .bulacan
     {  
-       fill: #FAFDC6;
+       fill: #F9FCB7;
        stroke:#000000;
        stroke-width:2;
     }
@@ -149,13 +149,13 @@
     }
 .cavite
     {  
-       fill: #D9EFF6;
+       fill: #D3EC87;
        stroke:#000000;
        stroke-width:2;
     }
 .cebu
     {  
-       fill: #F99856;
+       fill: #FA9857;
        stroke:#000000;
        stroke-width:2;
     }
@@ -215,13 +215,13 @@
     }
 .ilocos_norte
     {  
-       fill: #FEE89C;
+       fill: #FEE899;
        stroke:#000000;
        stroke-width:2;
     }
 .ilocos_sur
     {  
-       fill: #FDB467;
+       fill: #FDB466;
        stroke:#000000;
        stroke-width:2;
     }
@@ -233,7 +233,7 @@
     }
 .isabela
     {  
-       fill: #F36C43;
+       fill: #F46D43;
        stroke:#000000;
        stroke-width:2;
     }
@@ -257,7 +257,7 @@
     }
 .laguna
     {  
-       fill: #EAF7E3;
+       fill: #E6F49D;
        stroke:#000000;
        stroke-width:2;
     }
@@ -287,7 +287,7 @@
     }
 .manila
     {  
-       fill: #4D7EB9;
+       fill: #279E53;
        stroke:#000000;
        stroke-width:2;
     }
@@ -323,19 +323,19 @@
     }
 .ncr_2nd_dist_
     {  
-       fill: #343F99;
+       fill: #046F3A;
        stroke:#000000;
        stroke-width:2;
     }
 .ncr_3rd_dist_
     {  
-       fill: #E1F3F5;
+       fill: #DAEF8D;
        stroke:#000000;
        stroke-width:2;
     }
 .ncr_4th_dist_
     {  
-       fill: #313695;
+       fill: #006837;
        stroke:#000000;
        stroke-width:2;
     }
@@ -389,7 +389,7 @@
     }
 .pampanga
     {  
-       fill: #E3F4F1;
+       fill: #DDF091;
        stroke:#000000;
        stroke-width:2;
     }
@@ -413,7 +413,7 @@
     }
 .rizal
     {  
-       fill: #5C90C2;
+       fill: #3FAA59;
        stroke:#000000;
        stroke-width:2;
     }
@@ -485,7 +485,7 @@
     }
 .tarlac
     {  
-       fill: #FDDE8E;
+       fill: #FDDE89;
        stroke:#000000;
        stroke-width:2;
     }
