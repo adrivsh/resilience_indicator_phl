@@ -7,16 +7,20 @@ This repository contains several things. It will be updated regularly as the tra
 
 ## Jupyter notebooks  (*.ipynb)
 
-For training purposes, focus on the first two following two notebooks. You can *view* them from your broswer with no additional requirement.
-* **[socio_economic_capacity_demo](socio_economic_capacity_demo.ipynb)** is the main demo of the model. Just click the link to see the demo. 
+
+* **[socio_economic_capacity](socio_economic_capacity.ipynb)** is the main demo of the model. Just click the link to see the demo. This notebook reads the socio-economic data, reads the hazard data, and runs the model.
 
 * **[data_gathering_demo](data_gathering_demo.ipynb)** demonstrates how Python and Pandas can be used to gather data from different sources.
-All the data used now is only for proof-of-concept purpose, and can be replaced with data provided by the Philippine government.
+It is out of date and is kept only for proof-of-concept purpose.
 
-
-To go more in depth:
 * **[draw_maps](draw_maps.ipynb)** is the code used to draw maps from a dataset and a blank SVG map.
-* **[systematic_policy_assessment](systematic_policy_assessment.ipynb)** computes the elasticity of welfare and asset losses to all variables in the model, and **[render_policy_assessment](render_policy_assessment.ipynb)** plots the results.
+
+* **[draw_plots](draw_plots.ipynb)** demonstrates plots.
+
+* **[policy_assessment_demo](policy_assessment_demo.ipynb)** makes systematic policy assessments and plots the result.
+
+* **[muli_hazard_multi_period_demo](muli_hazard_multi_period_demo.ipynb)** demonstrates how to ahndle several hazard and several return periods.
+
 
 ## Data
 All the data required to run the resilience indicator is gathered in [all_data_compiled.xlsx](all_data_compiled.xlsx).
