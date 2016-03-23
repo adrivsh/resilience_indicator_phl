@@ -4,7 +4,7 @@ far,Exposure of nonpoor households ({sign}{dh:.0%}),0.01
 gdp_pc_pp,Average income in the province ({sign}{dh:.0%}),0.01
 cp,Average income of poor families ({sign}{dh:.0%}),0.01
 cr,Average income of nonpoor families ({sign}{dh:.0%}),0.01
-pi,Reactivity to early{sign}warnings ({sign}{dh:.0%}),0.05
+pi,Reactivity to early-warnings ({sign}{dh:.0%}),0.05
 pov_head,Poverty incidence ({sign}{dh:.0%}),0.01
 protection,Protection ({sign}{dh:.0f} yr),1
 shewp,Access to early warning for poor families ({sign}{dh:.0%}),0.1
