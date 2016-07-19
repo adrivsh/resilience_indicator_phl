@@ -1,18 +1,16 @@
 key,descriptor,increment
-fap,Exposure of poor households ({sign}{dh:.0%}),0.1
-far,Exposure of nonpoor households ({sign}{dh:.0%}),0.01
-gdp_pc_pp,Average income in the province ({sign}{dh:.0%}),0.01
-cp,Average income of poor families ({sign}{dh:.0%}),0.01
-cr,Average income of nonpoor families ({sign}{dh:.0%}),0.01
-pi,Reactivity to early-warnings ({sign}{dh:.0%}),0.05
-pov_head,Poverty incidence ({sign}{dh:.0%}),0.01
-protection,Protection ({sign}{dh:.0f} yr),1
-shewp,Access to early warning for poor families ({sign}{dh:.0%}),0.1
-shewr,Access to early warning for nonpoor families ({sign}{dh:.0%}),0.1
-sigma_p,Scale-up of social protection for poor households ({sign}{dh:.0%}),0.15
-sigma_r,Scale-up of social protection for nonpoor households ({sign}{dh:.0%}),0.15
-social_p,Social protection for poor households ({sign}{dh:.0%}),0.05
-social_r,Social protection for nonpoor households ({sign}{dh:.0%}),0.05
-T_rebuild_K,Time to reconstruct ({sign}{dh:.0f} yr),1
-v_p,Asset vulnerability for poor households ({sign}{dh:.0%}),0.05
-v_r,Asset vulnerability for nonpoor households ({sign}{dh:.0%}),0.05
+fap,Exposición de hogares pobres ({sign}{dh:.0%}),0.01
+far,Exposición de hogares no pobres ({sign}{dh:.0%}),0.01
+cp,Ingreso pc de hogares pobres ({sign}{dh:.0f}),100
+cr,Ingreso pc de hogares no pobres ({sign}{dh:.0f}),100
+pov_head,Incidencia de la pobreza ({sign}{dh:.0%}),0.01
+shewp,Acceso a alerta temprana para hogares pobres ({sign}{dh:.0%}),0.1
+shewr,Acceso a alerta temprana para hogares no pobres ({sign}{dh:.0%}),0.1
+sigma_p,Programa de respuesta para hogares pobres ({sign}{dh:.0%}),0.1
+sigma_r,Programa de respuesta para hogares no pobres ({sign}{dh:.0%}),0.1
+social_p,Protección social para hogares pobres ({sign}{dh:.0%}),0.1
+social_r,Protección social para hogares no pobres ({sign}{dh:.0%}),0.1
+T_rebuild_K,Velocidad de reconstrucción ({sign}{dh:.0f} yr),1
+v_p,Vulnerabilidad de los activos de los hogares pobres ({sign}{dh:.0%}),0.05
+v_r,Vulnerabilidad de los activos de los hogares no pobres ({sign}{dh:.0%}),0.05
+protection,Infraestructura de reducción de riesgo ({sign}{dh:.0f} yr),1

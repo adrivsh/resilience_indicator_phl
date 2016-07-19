@@ -2,6 +2,8 @@ from fancy_round import *
 from progress_reporter import *
 import matplotlib.pyplot as plt
 
+from autolabel import autolabel
+
 from subprocess import Popen  #to call other programs from python
 import sys #one function, flush, to force jupyter to print a message immediately
 import glob  #to make foldeltas, move files, etc.
@@ -143,13 +145,13 @@ outfolder="cards/"):
         autolabel(ax,rects2,colors.ix["dWtot_currency","edgecolor"],2,**smallfont)
 
         #annotated "legend"
-        ax.annotate("Effect on asset losses",  xy=(0,n-1+height/2),xycoords='data',ha="left",va="center",
+        ax.annotate("Pérdidas de activos estimadas",  xy=(0,n-1+height/2),xycoords='data',ha="left",va="center",
                       xytext=(20, -5), textcoords='offset points', 
                         arrowprops=dict(arrowstyle="->",
                                         connectionstyle="arc3,rad=-0.13",color=colors.edgecolor.dKtot
                                         ), **smallfont)
 
-        ax.annotate("Effect on welfare losses",  xy=(0,n-height),xycoords='data',ha="left",va="center",
+        ax.annotate("Pérdidas en bienestar estimadas",  xy=(0,n-height),xycoords='data',ha="left",va="center",
                       xytext=(20, 3), textcoords='offset points', 
                         arrowprops=dict(arrowstyle="->",
                                         connectionstyle="arc3,rad=+0.13",color=colors.edgecolor.dWtot_currency
@@ -227,13 +229,13 @@ outfolder="cards/"):
     autolabel(ax,rects2,colors.ix["dWtot_currency","edgecolor"],2,**smallfont)
 
     #annotated "legend"
-    ax.annotate("Effect on asset losses",  xy=(0,n-1+height/2),xycoords='data',ha="left",va="center",
+    ax.annotate("Pérdidas de activos estimadas",  xy=(0,n-1+height/2),xycoords='data',ha="left",va="center",
                   xytext=(20, -5), textcoords='offset points', 
                     arrowprops=dict(arrowstyle="->",
                                     connectionstyle="arc3,rad=-0.13",color=colors.edgecolor.dKtot
                                     ), **smallfont)
 
-    ax.annotate("Effect on welfare losses",  xy=(0,n-height),xycoords='data',ha="left",va="center",
+    ax.annotate("Pérdidas en bienestar estimadas",  xy=(0,n-height),xycoords='data',ha="left",va="center",
                   xytext=(20, 3), textcoords='offset points', 
                     arrowprops=dict(arrowstyle="->",
                                     connectionstyle="arc3,rad=+0.13",color=colors.edgecolor.dWtot_currency
@@ -283,7 +285,7 @@ outfolder="cards/"):
         rects2 = ax.barh(ind+height,  toplot["dWtot_currency"],height=height, **colors.ix["dWtot_currency"]
                 )
                 
-        ax.legend(["Effect on asset losses", "Effect on welfare losses"],loc="best")
+        # ax.legend(["Effect on asset losses", "Effect on welfare losses"],loc="best")
 
         #0 line
         plt.vlines(0, 0, n, colors="black")    
@@ -294,7 +296,7 @@ outfolder="cards/"):
         ax.set_xlabel(unit["string"])
         ax.set_yticks(ind+height)
         ax.set_yticklabels(toplot.index+"     "  )
-        plt.title(policy_descriptions[pol]);
+        plt.title(the_policy_description);
 
         # remove spines
         # ax.spines['bottom'].set_color('none')
@@ -333,47 +335,7 @@ outfolder="cards/"):
                     bbox_inches="tight" #ensures the policy label are not cropped out
                     )
             
-def autolabel(ax,rects,color, sigdigits,  **kwargs):
-    """attach labels to an existing horizontal bar plot. Passes kwargs to the text (font, color, etc)"""
-    
-    
-    for rect in rects:
-        
-        #parameters of the rectangle
-        h = rect.get_height()
-        x = rect.get_x()
-        y = rect.get_y()
-        w = rect.get_width()
-        
-        #figures out if it is a negative or positive value
-        value = x if x<0 else w
 
-        ####
-        # FORMATS LABEL
-        
-        #truncates the value to sigdigits digits after the coma.
-        stri=str(fancy_round(value,sigdigits))
-        
-        #remove trailing zeros
-        if "." in stri:
-            while stri.endswith("0"):
-                stri=stri[:-1]        
-        
-        #remove trailing dot
-        if stri.endswith("."):
-            stri=stri[:-1]        
-        
-        if stri=="-0":
-            stri="0"
-        
-        #space before or after (pad)
-        if value<0:
-            stri = stri+' '
-        else:
-            stri = ' '+stri
-
-        #actual print    
-        ax.text(value, y+0.4*h, stri, ha="right" if x<0 else 'left', va='center', color=color , **kwargs)
 
 def check_bounds(df, bounds):
     clip = df.clip(lower=bounds.inf.dropna(),upper=bounds.sup.dropna(),axis=1).fillna(df)

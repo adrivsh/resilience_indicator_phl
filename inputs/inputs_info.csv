@@ -19,6 +19,7 @@ pi,Avoided losses with early warning,0,1
 pop,Population,0,
 pov_head,Poverty incidence,0,1
 protection, Hazard (protection),0,
+protectionref, Hazard (protection),0,
 rel_gdp_pp, Average income of the province (relative to national),0,10
 resilience,Socio-economic capacity,0,
 rho,Discount rate,0,1

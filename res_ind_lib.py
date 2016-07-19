@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-def compute_resiliences(df_in, fa_ratios=None, multihazard_data =None):
+def compute_resiliences(df_in, fa_ratios=None, multihazard_data =None, is_local_welfare=True):
     """Main function. Computes all outputs (dK, resilience, dC, etc,.) from inputs"""
 
     df=df_in.copy()
@@ -26,7 +26,7 @@ def compute_resiliences(df_in, fa_ratios=None, multihazard_data =None):
     df[dkdw.columns]=dkdw
     
     #computes socio economic capacity and risk
-    df = calc_risk_and_resilience_from_k_w(df)
+    df = calc_risk_and_resilience_from_k_w(df, is_local_welfare)
 
     return df
 
@@ -106,7 +106,7 @@ def compute_dK_dW(df):
    
     return df_out
         
-def calc_risk_and_resilience_from_k_w(df): 
+def calc_risk_and_resilience_from_k_w(df, is_local_welfare): 
     """Computes risk and resilience from dk, dw and protection. Line by line: multiple return periods or hazard is transparent to this function"""
     
     df=df.copy()    
@@ -121,7 +121,10 @@ def calc_risk_and_resilience_from_k_w(df):
     #Reference losses
     h=1e-4
     
-    wprime =(welf(df["gdp_pc_pp_nat"]/rho+h,df["income_elast"])-welf(df["gdp_pc_pp_nat"]/rho-h,df["income_elast"]))/(2*h)
+    if is_local_welfare:
+        wprime =(welf(df["gdp_pc_pp"]/rho+h,df["income_elast"])-welf(df["gdp_pc_pp"]/rho-h,df["income_elast"]))/(2*h)
+    else:
+        wprime =(welf(df["gdp_pc_pp_nat"]/rho+h,df["income_elast"])-welf(df["gdp_pc_pp_nat"]/rho-h,df["income_elast"]))/(2*h)
     
     dWref   = wprime*df["dK"]
     

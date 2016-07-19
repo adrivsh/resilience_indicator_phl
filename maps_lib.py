@@ -13,7 +13,31 @@ img_width = 400
 import os, shutil
 from subprocess import Popen, PIPE, call 
 
-def make_map_from_svg(series_in, svg_file_path, outname, color_maper=plt.cm.get_cmap("Blues"), label = "", outfolder ="img/" , new_title=None, verbose=True):
+ 
+def n_to_one_normalizer(s,n=0):
+#affine transformation from s to [n,1]      
+    y =(s-s.min())/(s.max()-s.min())
+    return n+(1-n)*y
+    
+def bins_normalizer(x,n=7):
+  #bins the data in n regular bins ( is better than pd.bin ? )     
+    n=n-1
+    y= n_to_one_normalizer(x,0)  #0 to 1 numbe
+    return np.floor(n*y)/n
+
+def quantile_normalizer(column, nb_quantile=5):
+  #bbins in quintiles      
+    return (pd.qcut(column, nb_quantile,labels=False))/(nb_quantile-1)
+
+def num_to_hex(x):
+    h = hex(int(255*x)).split('x')[1]
+    if len(h)==1:
+        h="0"+h
+    return h
+
+
+
+def make_map_from_svg(series_in, svg_file_path, outname, color_maper=plt.cm.get_cmap("Blues"), label = "", outfolder ="img/" , new_title=None, verbose=True, normalizer = n_to_one_normalizer, norm_param = 0):
     """Makes a cloropleth map and a legend from a panda series and a blank svg map. 
     Assumes the index of the series matches the SVG classes
     Saves the map in SVG, and in PNG if Inkscape is installed.
@@ -24,7 +48,7 @@ def make_map_from_svg(series_in, svg_file_path, outname, color_maper=plt.cm.get_
     series_in.index = series_in.index.str.lower().str.replace(" ","_").str.replace("-","_").str.replace(".","_").str.replace("(","_").str.replace(")","_")
     
     #compute the colors 
-    color = data_to_rgb(series_in,color_maper=color_maper)
+    color = data_to_rgb(series_in,color_maper=color_maper, normalizer = normalizer, norm_param=norm_param)
 
     #Builds the CCS style for the new map  (todo: this step could get its own function)
     style_base =\
@@ -114,7 +138,7 @@ def make_map_from_svg(series_in, svg_file_path, outname, color_maper=plt.cm.get_
             could_do_png_map = True
 
     #makes the legend with matplotlib
-    l = make_legend(100*series_in,color_maper,label,outfolder+"legend_of_"+outname)
+    l = make_legend(100*series_in,color_maper,label,outfolder+"legend_of_"+outname,  n_bins=norm_param)
     
     if shutil.which("convert") is None:
         print("Cannot merge map and legend. Install ImageMagick® to do so.")
@@ -139,54 +163,36 @@ def make_map_from_svg(series_in, svg_file_path, outname, color_maper=plt.cm.get_
     
 import matplotlib as mpl
 
-def make_legend(serie,cmap,label="",path=None):
+def make_legend(serie,cmap,label="",path=None, n_bins=0):
+    """Makes a legend using matplolib, a serie sof data, a colormap. saves if pa """
     #todo: log flag
 
-    
     fig = plt.figure(figsize=(8,3))
     ax1 = fig.add_axes([0.05, 0.80, 0.9, 0.15])
 
     vmin=serie.min()
     vmax=serie.max()
-
+    
+    if n_bins >1:
     # define discrete bins and normalize
-    # bounds =np.linspace(vmin,vmax,5)
-    # norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
+        bounds =np.linspace( vmin,vmax,n_bins+1)
+        norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
+    else:
     #continuous legend
-    norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
+        norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
 
     cb = mpl.colorbar.ColorbarBase(ax1, cmap=cmap, norm=norm, orientation='horizontal')
     #cb.ax.set_xticklabels(['0.01%','0.1%','1%','10%'])
     cb.set_label(label)
     if path is not None:
         plt.savefig(path+".png",bbox_inches="tight",transparent=True)  
+    
     plt.close(fig)    
     
+    return fig 
     
-    return Image(path+".png", width=img_width   )  
-
     
-def n_to_one_normalizer(s,n=0):
-  #affine transformation from s to [n,1]      
-    y =(s-s.min())/(s.max()-s.min())
-    return n+(1-n)*y
-    
-def bins_normalizer(x,n=7):
-  #bins the data in n regular bins ( is better than pd.bin ? )     
-    n=n-1
-    y= n_to_one_normalizer(x,0)  #0 to 1 numbe
-    return np.floor(n*y)/n
-
-def quantile_normalizer(column, nb_quantile=5):
-  #bbins in quintiles      
-    return (pd.qcut(column, nb_quantile,labels=False))/(nb_quantile-1)
-
-def num_to_hex(x):
-    h = hex(int(255*x)).split('x')[1]
-    if len(h)==1:
-        h="0"+h
-    return h
 
 def data_to_rgb(serie,color_maper=plt.cm.get_cmap("Blues_r"), normalizer = n_to_one_normalizer, norm_param = 0, na_color = "#e0e0e0"):
     """This functions transforms  data series into a series of color, using a colormap."""

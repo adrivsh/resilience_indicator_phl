@@ -1,0 +1,64 @@
+province_id,first_rena,province_name
+1,Red River Delta,Ha Noi
+2,North East,Ha Giang
+4,North East,Cao Bang
+6,North East,Bac Kan
+8,North East,Tuyen Quang
+10,North East,Lao Cai
+11,North West,Dien Bien
+12,North West,Lai Chau
+14,North West,Son La
+15,North East,Yen Bai
+17,North West,Hoa Binh
+19,North East,Thai Nguyen
+20,North East,Lang Son
+22,North East,Quang Ninh
+24,North East,Bac Giang
+25,Red River Delta,Phu Tho
+26,Red River Delta,Vinh Phuc
+27,Red River Delta,Bac Ninh
+30,Red River Delta,Hai Duong
+31,Red River Delta,Hai Phong city
+33,Red River Delta,Hung Yen
+34,Red River Delta,Thai Binh
+35,Red River Delta,Ha Nam
+36,Red River Delta,Nam Dinh
+37,Red River Delta,Ninh Binh
+38,North Central Coast,Thanh Hoa
+40,North Central Coast,Nghe An
+42,North Central Coast,Ha Tinh
+44,North Central Coast,Quang Binh
+45,North Central Coast,Quang Tri
+46,North Central Coast,Thua Thien Hue
+48,South Central Coast,Da Nang city
+49,South Central Coast,Quang Nam
+51,South Central Coast,Quang Ngai
+52,South Central Coast,Binh Dinh
+54,South Central Coast,Phu Yen
+56,South Central Coast,Khanh Hoa
+58,South-East South,Ninh Thuan
+60,South-East South,Binh Thuan
+62,Central Highlands,Kon Tum
+64,Central Highlands,Gia Lai
+66,Central Highlands,Dak Lak
+67,Central Highlands,Dak Nong
+68,Central Highlands,Lam Dong
+70,South-East South,Binh Phuoc
+72,South-East South,Tay Ninh
+74,South-East South,Binh Duong
+75,South-East South,Dong Nai
+77,South-East South,Ba Ria - Vung Tau
+79,South-East South,Ho Chi Minh city
+80,Mekong River Delta,Long An
+82,Mekong River Delta,Tien Giang
+83,Mekong River Delta,Ben Tre
+84,Mekong River Delta,Tra Vinh
+86,Mekong River Delta,Vinh Long
+87,Mekong River Delta,Dong Thap
+89,Mekong River Delta,An Giang
+91,Mekong River Delta,Kien Giang
+92,Mekong River Delta,Can Tho city
+93,Mekong River Delta,Hau Giang
+94,Mekong River Delta,Soc Trang
+95,Mekong River Delta,Bac Lieu
+96,Mekong River Delta,Ca Mau

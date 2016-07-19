@@ -1,0 +1,79 @@
+variable_name,variable_description
+province,province
+region,region
+regid,region ID
+pcinc_ppp2010,2010 per-capita income in 2011 PPP
+povline2010,2010 national poverty line = $3.49-a-day in 2011 PPP
+poor2010,2010 number of people below national poverty line
+transfers2010,share of income from transfers
+sp_scheme2010,2010 participation in aid schemes
+sp_remit2010,2010 income from international remittances
+info_radio2010,2010 ownership of radio
+info_cell2010,2010 ownership of cell phones
+info_tv2010,2010 ownership of tv
+hs_pole12010,2010 material of housing poles = concrete
+hs_pole22010,2010 material of housing poles = stone
+hs_pole32010,2010 material of housing poles = iron/steel/good wood
+hs_pole42010,2010 material of housing poles = poor quality wood/bamboo
+hs_pole52010,2010 material of housing poles = others
+hs_wall12010,2010 material of housing wall = concrete
+hs_wall22010,2010 material of housing wall = bricks/stone
+hs_wall32010,2010 material of housing wall = wood/metal
+hs_wall42010,2010 material of housing wall = soil/straw
+hs_wall52010,2010 material of housing wall = bamboo
+hs_wall62010,2010 material of housing wall = others
+hs_roof12010,2010 material of housing roof = concrete
+hs_roof22010,2010 material of housing roof = tiles
+hs_roof32010,2010 material of housing roof = slabs
+hs_roof42010,2010 material of housing roof = leave/straw
+hs_roof52010,2010 material of housing roof = others
+pcinc_ppp2012,2012 per-capita income in 2011 PPP
+povline2012,2012 national poverty line = $3.49-a-day in 2011 PPP
+poor2012,2012 number of people below national poverty line
+transfers2012,share of income from transfers
+sp_scheme2012,2012 participation in aid schemes
+sp_remit2012,2012 income from international remittances
+info_radio2012,2012 ownership of radio
+info_cell2012,2012 ownership of cell phones
+info_tv2012,2012 ownership of tv
+hs_pole12012,2012 material of housing poles = concrete
+hs_pole22012,2012 material of housing poles = stone
+hs_pole32012,2012 material of housing poles = iron/steel/good wood
+hs_pole42012,2012 material of housing poles = poor quality wood/bamboo
+hs_pole52012,2012 material of housing poles = others
+hs_wall12012,2012 material of housing wall = concrete
+hs_wall22012,2012 material of housing wall = bricks/stone
+hs_wall32012,2012 material of housing wall = wood/metal
+hs_wall42012,2012 material of housing wall = soil/straw
+hs_wall52012,2012 material of housing wall = bamboo
+hs_wall62012,2012 material of housing wall = others
+hs_roof12012,2012 material of housing roof = concrete
+hs_roof22012,2012 material of housing roof = tiles
+hs_roof32012,2012 material of housing roof = slabs
+hs_roof42012,2012 material of housing roof = leave/straw
+hs_roof52012,2012 material of housing roof = others
+pcinc_ppp2014,2014 per-capita income in 2011 PPP
+povline2014,2014 national poverty line = $3.49-a-day in 2011 PPP
+poor2014,2014 number of people below national poverty line
+transfers2014,share of income from transfers
+sp_scheme2014,2014 participation in aid schemes
+sp_remit2014,2014 income from international remittances
+info_radio2014,2014 ownership of radio
+info_cell2014,2014 ownership of cell phones
+info_tv2014,2014 ownership of tv
+hs_pole12014,2014 material of housing poles = concrete
+hs_pole22014,2014 material of housing poles = stone
+hs_pole32014,2014 material of housing poles = iron/steel/good wood
+hs_pole42014,2014 material of housing poles = poor quality wood/bamboo
+hs_pole52014,2014 material of housing poles = others
+hs_wall12014,2014 material of housing wall = concrete
+hs_wall22014,2014 material of housing wall = bricks/stone
+hs_wall32014,2014 material of housing wall = wood/metal
+hs_wall42014,2014 material of housing wall = soil/straw
+hs_wall52014,2014 material of housing wall = bamboo
+hs_wall62014,2014 material of housing wall = others
+hs_roof12014,2014 material of housing roof = concrete
+hs_roof22014,2014 material of housing roof = tiles
+hs_roof32014,2014 material of housing roof = slabs
+hs_roof42014,2014 material of housing roof = leave/straw
+hs_roof52014,2014 material of housing roof = others
